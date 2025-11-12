@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodExpress App - Interactive Prototype by Kenkai Labs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.3);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .status-bar {
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .app-header {
+            padding: 15px 20px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .header-with-back {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #ff6b6b;
+            user-select: none;
+        }
+        
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .address {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .search-bar {
+            margin: 15px 20px;
+            padding: 12px 15px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            border: none;
+            width: calc(100% - 40px);
+            font-size: 14px;
+        }
+        
+        .categories {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .category-chip {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all .2s;
+            user-select: none;
+        }
+        
+        .category-chip.active {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        
+        .category-chip:active {
+            transform: scale(0.95);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            padding: 0 20px;
+            margin: 20px 0 15px;
+        }
+        
+        .restaurant-card {
+            margin: 0 20px 15px;
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+            cursor: pointer;
+            transition: transform .2s;
+            user-select: none;
+        }
+        
+        .restaurant-card:active {
+            transform: scale(.98);
+        }
+        
+        .restaurant-image {
+            width: 100%;
+            height: 140px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+        }
+        
+        .restaurant-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .restaurant-info {
+            padding: 12px;
+        }
+        
+        .restaurant-name {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .restaurant-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .menu-item {
+            display: flex;
+            gap: 12px;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .menu-item:active {
+            background: #f9f9f9;
+        }
+        
+        .menu-item-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+        
+        .menu-item-info {
+            flex: 1;
+        }
+        
+        .menu-item-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+        
+        .menu-item-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .menu-item-price {
+            font-weight: 700;
+            color: #ff6b6b;
+        }
+        
+        .add-btn {
+            padding: 8px 20px;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-end;
+            user-select: none;
+        }
+        
+        .add-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 375px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+        
+        .nav-item {
+            text-align: center;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 15px;
+            color: #999;
+            position: relative;
+            user-select: none;
+        }
+        
+        .nav-item.active {
+            color: #ff6b6b;
+        }
+        
+        .nav-item:active {
+            transform: scale(0.9);
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff6b6b;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        .cart-item {
+            display: flex;
+            gap: 12px;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 8px;
+        }
+        
+        .cart-item-details {
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .cart-item-price {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #ff6b6b;
+            background: #fff;
+            color: #ff6b6b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            user-select: none;
+        }
+        
+        .qty-btn:active {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        
+        .bill-summary {
+            padding: 20px;
+            background: #f9f9f9;
+            margin: 15px 20px;
+            border-radius: 12px;
+        }
+        
+        .bill-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .bill-row.total {
+            font-weight: 700;
+            font-size: 16px;
+            padding-top: 10px;
+            border-top: 2px solid #ddd;
+            margin-top: 10px;
+        }
+        
+        .checkout-btn {
+            margin: 20px;
+            padding: 16px;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: calc(100% - 40px);
+            user-select: none;
+        }
+        
+        .checkout-btn:active {
+            background: #e85555;
+            transform: scale(0.98);
+        }
+        
+        .order-tracking {
+            padding: 20px;
+        }
+        
+        .tracking-status {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .tracking-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .tracking-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .tracking-subtitle {
+            font-size: 14px;
+            opacity: .9;
+        }
+        
+        .timeline {
+            padding: 20px 0;
+        }
+        
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #4ade80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .timeline-dot.pending {
+            background: #e5e7eb;
+            color: #999;
+        }
+        
+        .timeline-content {
+            flex: 1;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-time {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px;
+            width: 320px;
+            animation: modalSlideUp .3s ease;
+        }
+        
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-icon {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .modal-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .modal-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .modal-btn-primary {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        
+        .modal-btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .customization-options {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .customization-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .customization-option {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        
+        .customization-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .modal-price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ff6b6b;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2563eb;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Home Screen -->
+    <div class="phone-frame">
+        <div id="homeScreen" class="screen active">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="location">📍 Current Location</div>
+                <div class="address">Koramangala, Bangalore</div>
+            </div>
+            
+            <input type="text" class="search-bar" placeholder="Search for restaurants or dishes...">
+            
+            <div class="categories">
+                <div class="category-chip active">All</div>
+                <div class="category-chip">Pizza</div>
+                <div class="category-chip">Burgers</div>
+                <div class="category-chip">Indian</div>
+                <div class="category-chip">Chinese</div>
+            </div>
+            
+            <div class="section-title">Popular Near You</div>
+            
+            <div class="restaurant-card" onclick="showRestaurant()">
+                <div class="restaurant-image">
+                    <span class="restaurant-badge">⭐ 4.5</span>
+                </div>
+                <div class="restaurant-info">
+                    <div class="restaurant-name">Spice Junction</div>
+                    <div class="restaurant-meta">
+                        <span>🍛 Indian, Chinese</span>
+                        <span>⏱️ 25-30 min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="restaurant-card" onclick="showRestaurant()">
+                <div class="restaurant-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <span class="restaurant-badge">⭐ 4.3</span>
+                </div>
+                <div class="restaurant-info">
+                    <div class="restaurant-name">Pizza Paradise</div>
+                    <div class="restaurant-meta">
+                        <span>🍕 Pizza, Italian</span>
+                        <span>⏱️ 20-25 min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="restaurant-card" onclick="showRestaurant()">
+                <div class="restaurant-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                    <span class="restaurant-badge">⭐ 4.7</span>
+                </div>
+                <div class="restaurant-info">
+                    <div class="restaurant-name">Burger House</div>
+                    <div class="restaurant-meta">
+                        <span>🍔 Burgers, Fries</span>
+                        <span>⏱️ 15-20 min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Restaurant Menu Screen -->
+        <div id="restaurantScreen" class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="header-with-back">
+                    <span class="back-btn" onclick="showHome()">←</span>
+                    <div>
+                        <div class="restaurant-name">Spice Junction</div>
+                        <div style="font-size: 13px; color: #666;">⭐ 4.5 • ⏱️ 25-30 min</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="categories">
+                <div class="category-chip active">Recommended</div>
+                <div class="category-chip">Starters</div>
+                <div class="category-chip">Main Course</div>
+                <div class="category-chip">Desserts</div>
+            </div>
+            
+            <div class="menu-item" onclick="showItemModal('Butter Chicken', '₹320')">
+                <div class="menu-item-image"></div>
+                <div class="menu-item-info">
+                    <div class="menu-item-name">Butter Chicken</div>
+                    <div class="menu-item-desc">Creamy tomato curry with tender chicken</div>
+                    <div class="menu-item-price">₹320</div>
+                </div>
+                <button class="add-btn" onclick="event.stopPropagation(); addToCart('Butter Chicken', 320)">Add</button>
+            </div>
+            
+            <div class="menu-item" onclick="showItemModal('Paneer Tikka', '₹280')">
+                <div class="menu-item-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+                <div class="menu-item-info">
+                    <div class="menu-item-name">Paneer Tikka</div>
+                    <div class="menu-item-desc">Grilled cottage cheese with Indian spices</div>
+                    <div class="menu-item-price">₹280</div>
+                </div>
+                <button class="add-btn" onclick="event.stopPropagation(); addToCart('Paneer Tikka', 280)">Add</button>
+            </div>
+            
+            <div class="menu-item" onclick="showItemModal('Chicken Biryani', '₹350')">
+                <div class="menu-item-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);"></div>
+                <div class="menu-item-info">
+                    <div class="menu-item-name">Chicken Biryani</div>
+                    <div class="menu-item-desc">Aromatic rice with succulent chicken</div>
+                    <div class="menu-item-price">₹350</div>
+                </div>
+                <button class="add-btn" onclick="event.stopPropagation(); addToCart('Chicken Biryani', 350)">Add</button>
+            </div>
+            
+            <div class="menu-item" onclick="showItemModal('Dal Makhani', '₹240')">
+                <div class="menu-item-image" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);"></div>
+                <div class="menu-item-info">
+                    <div class="menu-item-name">Dal Makhani</div>
+                    <div class="menu-item-desc">Slow cooked black lentils in cream</div>
+                    <div class="menu-item-price">₹240</div>
+                </div>
+                <button class="add-btn" onclick="event.stopPropagation(); addToCart('Dal Makhani', 240)">Add</button>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Cart Screen -->
+        <div id="cartScreen" class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="header-with-back">
+                    <span class="back-btn" onclick="showRestaurant()">←</span>
+                    <div class="restaurant-name">Your Cart</div>
+                </div>
+            </div>
+            
+            <div class="section-title" style="margin-top: 10px;">Spice Junction</div>
+            
+            <div id="cartItems">
+                <div class="cart-item">
+                    <div class="cart-item-image"></div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-name">Butter Chicken</div>
+                        <div class="cart-item-price">₹320</div>
+                        <div class="quantity-controls">
+                            <button class="qty-btn">-</button>
+                            <span>1</span>
+                            <button class="qty-btn">+</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cart-item">
+                    <div class="cart-item-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);"></div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-name">Chicken Biryani</div>
+                        <div class="cart-item-price">₹350</div>
+                        <div class="quantity-controls">
+                            <button class="qty-btn">-</button>
+                            <span>2</span>
+                            <button class="qty-btn">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bill-summary">
+                <div class="bill-row">
+                    <span>Item Total</span>
+                    <span>₹1,020</span>
+                </div>
+                <div class="bill-row">
+                    <span>Delivery Fee</span>
+                    <span>₹40</span>
+                </div>
+                <div class="bill-row">
+                    <span>GST (5%)</span>
+                    <span>₹51</span>
+                </div>
+                <div class="bill-row total">
+                    <span>To Pay</span>
+                    <span>₹1,111</span>
+                </div>
+            </div>
+            
+            <button class="checkout-btn" onclick="showCheckoutModal()">Proceed to Checkout</button>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Orders Screen -->
+        <div id="ordersScreen" class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="restaurant-name">My Orders</div>
+            </div>
+            
+            <div class="restaurant-card" onclick="showTracking()">
+                <div class="restaurant-info">
+                    <div class="restaurant-name">Order #12345</div>
+                    <div class="restaurant-meta">
+                        <span>Spice Junction</span>
+                        <span>₹1,111</span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="category-chip active">Out for Delivery</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="restaurant-card">
+                <div class="restaurant-info">
+                    <div class="restaurant-name">Order #12344</div>
+                    <div class="restaurant-meta">
+                        <span>Pizza Paradise</span>
+                        <span>₹850</span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="category-chip">Delivered</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="restaurant-card">
+                <div class="restaurant-info">
+                    <div class="restaurant-name">Order #12343</div>
+                    <div class="restaurant-meta">
+                        <span>Burger House</span>
+                        <span>₹620</span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="category-chip">Delivered</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Order Tracking Screen -->
+        <div id="trackingScreen" class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="header-with-back">
+                    <span class="back-btn" onclick="showOrders()">←</span>
+                    <div class="restaurant-name">Track Order</div>
+                </div>
+            </div>
+            
+            <div class="order-tracking">
+                <div class="tracking-status">
+                    <div class="tracking-icon">🛵</div>
+                    <div class="tracking-title">Out for Delivery</div>
+                    <div class="tracking-subtitle">Your food will arrive in 10-15 minutes</div>
+                </div>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot">✓</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Order Placed</div>
+                            <div class="timeline-time">2:30 PM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot">✓</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Order Confirmed</div>
+                            <div class="timeline-time">2:32 PM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot">✓</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Food Prepared</div>
+                            <div class="timeline-time">2:45 PM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot">🛵</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Out for Delivery</div>
+                            <div class="timeline-time">2:55 PM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot pending">⏱️</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Delivered</div>
+                            <div class="timeline-time">Expected: 3:10 PM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="showHome()">🏠</div>
+            <div class="nav-item" onclick="showHome()">🔍</div>
+            <div class="nav-item" style="position: relative;" onclick="showCart()">
+                🛒
+                <span class="cart-badge" id="cartBadge">2</span>
+            </div>
+            <div class="nav-item" onclick="showOrders()">📦</div>
+            <div class="nav-item" onclick="showHome()">👤</div>
+        </div>
+    </div>
+    
+    <!-- Item Detail Modal -->
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">🍽️</div>
+                <div class="modal-title" id="modalItemName">Butter Chicken</div>
+                <div class="modal-subtitle">Creamy tomato curry with tender chicken pieces</div>
+            </div>
+            <div class="customization-options">
+                <div class="customization-title">Customization</div>
+                <div class="customization-option">
+                    <span>Extra Spicy</span>
+                    <input type="checkbox">
+                </div>
+                <div class="customization-option">
+                    <span>Less Oil</span>
+                    <input type="checkbox">
+                </div>
+            </div>
+            <div class="modal-price-section">
+                <span class="modal-price" id="modalItemPrice">₹320</span>
+                <div class="quantity-controls">
+                    <button class="qty-btn">-</button>
+                    <span>1</span>
+                    <button class="qty-btn">+</button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="addToCartFromModal(); closeModal();">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Checkout Success Modal -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">✅</div>
+                <div class="modal-title">Order Placed!</div>
+                <div class="modal-subtitle">Your order has been successfully placed</div>
+            </div>
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>Order ID:</span>
+                    <strong>#12345</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>Total Amount:</span>
+                    <strong>₹1,111</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Delivery Time:</span>
+                    <strong>25-30 min</strong>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal(); showHome();">Go Home</button>
+                <button class="modal-btn modal-btn-primary" onclick="closeModal(); showTracking();">Track Order</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="watermark">Kenkai Labs - Interactive Prototype</div>
+    
+    <script>
+        let cartCount = 2;
+        
+        function showHome() {
+            hideAllScreens();
+            document.getElementById('homeScreen').classList.add('active');
+            updateNav(0);
+        }
+        
+        function showRestaurant() {
+            hideAllScreens();
+            document.getElementById('restaurantScreen').classList.add('active');
+        }
+        
+        function showCart() {
+            hideAllScreens();
+            document.getElementById('cartScreen').classList.add('active');
+            updateNav(2);
+        }
+        
+        function showOrders() {
+            hideAllScreens();
+            document.getElementById('ordersScreen').classList.add('active');
+            updateNav(3);
+        }
+        
+        function showTracking() {
+            hideAllScreens();
+            document.getElementById('trackingScreen').classList.add('active');
+        }
+        
+        function hideAllScreens() {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+        }
+        
+        function updateNav(index) {
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+        }
+        
+        function showItemModal(name, price) {
+            document.getElementById('modalItemName').textContent = name;
+            document.getElementById('modalItemPrice').textContent = price;
+            document.getElementById('itemModal').classList.add('active');
+        }
+        
+        function showCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+        
+        function addToCart(item, price) {
+            cartCount++;
+            document.getElementById('cartBadge').textContent = cartCount;
+            // Visual feedback
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Added';
+            btn.style.background = '#4ade80';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#ff6b6b';
+            }, 1000);
+        }
+        
+        function addToCartFromModal() {
+            cartCount++;
+            document.getElementById('cartBadge').textContent = cartCount;
+        }
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+        
+        // Prevent modal close when clicking inside modal content
+        document.querySelectorAll('.modal-content').forEach(content => {
+            content.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>

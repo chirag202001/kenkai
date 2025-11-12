@@ -32,21 +32,21 @@ const ServicesOverview = () => {
     {
       id: "deliver",
       icon: Wrench,
-      title: "Build & Execute",
-      description: "Hands-on development or embedded execution to turn the roadmap into working software.",
+      title: "Full-Stack Development",
+      description: "We build complete web applications, mobile apps, and websites with modern tech stacks.",
       features: [
-        "MVP development",
-        "Quality assurance",
-        "Team integration",
-        "Knowledge transfer"
+        "Web & mobile app development",
+        "Responsive websites",
+        "Cloud deployment",
+        "Ongoing support"
       ],
       link: "/services#execution"
     }
   ];
 
   return (
-    <section className="section-padding bg-white">
-      <div className="container-width">
+    <section className="py-16 md:py-20 bg-white">
+      <div className="container-width px-4 md:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
             What We Do

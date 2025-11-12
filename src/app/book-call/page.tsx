@@ -82,7 +82,7 @@ function BookCallContent() {
       <main>
         <Header />
         <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
-          <div className="container-width section-padding">
+          <div className="container-width px-4 md:px-8">
             <div className="max-w-2xl mx-auto text-center">
               <div className="bg-white rounded-2xl p-12 shadow-xl">
                 <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
@@ -123,7 +123,7 @@ function BookCallContent() {
       <Header />
       
       <section className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pt-24 pb-16">
-        <div className="container-width section-padding">
+        <div className="container-width px-4 md:px-8">
           <div className="max-w-4xl mx-auto">
             {/* Progress Bar */}
             <div className="mb-8">

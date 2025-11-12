@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudSync SaaS - Interactive Prototype by Kenkai Labs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #333;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        nav {
+            background: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color .2s;
+        }
+        
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+        
+        .btn {
+            padding: .75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37,99,235,.3);
+        }
+        
+        .btn-secondary {
+            background: #fff;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: .9;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .hero-cta .btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #1e293b;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.08);
+            cursor: pointer;
+            transition: all .3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 24px rgba(0,0,0,.12);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-desc {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .pricing-card {
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.08);
+            text-align: center;
+            transition: all .3s;
+            cursor: pointer;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0,0,0,.15);
+        }
+        
+        .pricing-card.featured {
+            border: 3px solid #2563eb;
+            transform: scale(1.05);
+        }
+        
+        .pricing-badge {
+            background: #2563eb;
+            color: #fff;
+            padding: .5rem 1rem;
+            border-radius: 20px;
+            font-size: .9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .pricing-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: .5rem;
+        }
+        
+        .pricing-period {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .pricing-features li {
+            padding: .75rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .pricing-features li:before {
+            content: '✓ ';
+            color: #4ade80;
+            font-weight: 700;
+            margin-right: .5rem;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .testimonial-card {
+            background: #f9fafb;
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .testimonial-name {
+            font-weight: 700;
+        }
+        
+        .testimonial-role {
+            font-size: .9rem;
+            color: #666;
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: .9;
+        }
+        
+        footer {
+            background: #1e293b;
+            color: #fff;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            margin: 2rem;
+            animation: modalFadeIn .3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-header h2 {
+            font-size: 2rem;
+            color: #1e293b;
+        }
+        
+        .modal-close {
+            cursor: pointer;
+            font-size: 2rem;
+            color: #666;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background .2s;
+        }
+        
+        .modal-close:hover {
+            background: #f3f4f6;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: .5rem;
+            color: #374151;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: .875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color .2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        
+        .feature-detail {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: #f9fafb;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .feature-detail h3 {
+            font-size: 1.25rem;
+            margin-bottom: .75rem;
+        }
+        
+        .feature-detail p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+        
+        .feature-list li {
+            padding: .5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .feature-list li:before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #2563eb;
+            font-weight: 700;
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .success-message {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .success-message h3 {
+            font-size: 1.75rem;
+            margin-bottom: .5rem;
+        }
+        
+        .success-message p {
+            color: #666;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2563eb;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Home Screen -->
+    <div id="homeScreen" class="screen active">
+        <nav>
+            <div class="logo">☁️ CloudSync</div>
+            <ul class="nav-links">
+                <li><a onclick="scrollToSection('features')">Features</a></li>
+                <li><a onclick="scrollToSection('pricing')">Pricing</a></li>
+                <li><a onclick="scrollToSection('testimonials')">Testimonials</a></li>
+            </ul>
+            <button class="btn btn-primary" onclick="showSignupModal()">Get Started</button>
+        </nav>
+        
+        <div class="hero">
+            <h1>Sync Your Work.<br>Anywhere, Anytime.</h1>
+            <p>The most powerful cloud collaboration platform for modern teams.</p>
+            <div class="hero-cta">
+                <button class="btn btn-primary" onclick="showSignupModal()">Start Free Trial</button>
+                <button class="btn btn-secondary" onclick="showScreen('featuresScreen')">Learn More</button>
+            </div>
+        </div>
+        
+        <div id="features" class="section">
+            <h2 class="section-title">Powerful Features</h2>
+            <div class="features-grid">
+                <div class="feature-card" onclick="showFeatureModal('realtime')">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Real-time Sync</h3>
+                    <p class="feature-desc">Instant synchronization across all your devices. Never lose a change again.</p>
+                </div>
+                <div class="feature-card" onclick="showFeatureModal('security')">
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">Bank-level Security</h3>
+                    <p class="feature-desc">End-to-end encryption keeps your data safe and private.</p>
+                </div>
+                <div class="feature-card" onclick="showFeatureModal('collaboration')">
+                    <div class="feature-icon">👥</div>
+                    <h3 class="feature-title">Team Collaboration</h3>
+                    <p class="feature-desc">Work together seamlessly with real-time editing and comments.</p>
+                </div>
+                <div class="feature-card" onclick="showFeatureModal('integration')">
+                    <div class="feature-icon">🔗</div>
+                    <h3 class="feature-title">App Integration</h3>
+                    <p class="feature-desc">Connect with 1000+ apps you already use every day.</p>
+                </div>
+                <div class="feature-card" onclick="showFeatureModal('storage')">
+                    <div class="feature-icon">💾</div>
+                    <h3 class="feature-title">Unlimited Storage</h3>
+                    <p class="feature-desc">Store as much as you need without worrying about limits.</p>
+                </div>
+                <div class="feature-card" onclick="showFeatureModal('support')">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">24/7 Support</h3>
+                    <p class="feature-desc">Our team is always here to help you succeed.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="pricing" class="section" style="background: #f9fafb;">
+            <h2 class="section-title">Simple, Transparent Pricing</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card" onclick="showPricingModal('starter')">
+                    <div class="pricing-name">Starter</div>
+                    <div class="pricing-price">$9</div>
+                    <div class="pricing-period">per user/month</div>
+                    <ul class="pricing-features">
+                        <li>100 GB Storage</li>
+                        <li>5 Team Members</li>
+                        <li>Basic Features</li>
+                        <li>Email Support</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); showSignupModal()">Start Trial</button>
+                </div>
+                
+                <div class="pricing-card featured" onclick="showPricingModal('professional')">
+                    <div class="pricing-badge">MOST POPULAR</div>
+                    <div class="pricing-name">Professional</div>
+                    <div class="pricing-price">$29</div>
+                    <div class="pricing-period">per user/month</div>
+                    <ul class="pricing-features">
+                        <li>1 TB Storage</li>
+                        <li>Unlimited Team Members</li>
+                        <li>All Features</li>
+                        <li>Priority Support</li>
+                        <li>Advanced Analytics</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); showSignupModal()">Start Trial</button>
+                </div>
+                
+                <div class="pricing-card" onclick="showPricingModal('enterprise')">
+                    <div class="pricing-name">Enterprise</div>
+                    <div class="pricing-price">Custom</div>
+                    <div class="pricing-period">contact sales</div>
+                    <ul class="pricing-features">
+                        <li>Unlimited Storage</li>
+                        <li>Unlimited Everything</li>
+                        <li>Custom Features</li>
+                        <li>Dedicated Support</li>
+                        <li>SLA Guarantee</li>
+                        <li>Advanced Security</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); showContactModal()">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="testimonials" class="section">
+            <h2 class="section-title">Loved by Teams Worldwide</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"CloudSync has transformed how our team collaborates. The real-time sync is flawless and the interface is incredibly intuitive."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar"></div>
+                        <div>
+                            <div class="testimonial-name">Sarah Johnson</div>
+                            <div class="testimonial-role">CTO, TechCorp</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Security was our top concern, and CloudSync exceeded our expectations. Enterprise-grade encryption with zero compromises."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+                        <div>
+                            <div class="testimonial-name">Michael Chen</div>
+                            <div class="testimonial-role">CISO, SecureBank</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"We switched from three different tools to just CloudSync. It's everything we need in one beautiful package."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);"></div>
+                        <div>
+                            <div class="testimonial-name">Emma Williams</div>
+                            <div class="testimonial-role">Product Manager, StartupXYZ</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <h2>Ready to Get Started?</h2>
+            <p>Join 50,000+ teams already using CloudSync</p>
+            <button class="btn btn-primary" style="background: #fff; color: #2563eb;" onclick="showSignupModal()">Start Your Free Trial</button>
+        </div>
+        
+        <footer>
+            <p>&copy; 2024 CloudSync. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <!-- Feature Detail Modal -->
+    <div id="featureModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="featureModalTitle">Feature Details</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="featureModalContent"></div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="closeModal(); showSignupModal();">Start Free Trial</button>
+        </div>
+    </div>
+    
+    <!-- Pricing Detail Modal -->
+    <div id="pricingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="pricingModalTitle">Plan Details</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="pricingModalContent"></div>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" style="flex: 1;" onclick="closeModal(); showSignupModal();">Subscribe Now</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Start Your Free Trial</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <form onsubmit="event.preventDefault(); showSuccessModal();">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Work Email</label>
+                    <input type="email" class="form-input" placeholder="you@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Company Name</label>
+                    <input type="text" class="form-input" placeholder="Your company name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Team Size</label>
+                    <select class="form-input" required>
+                        <option value="">Select team size</option>
+                        <option>1-5 people</option>
+                        <option>6-20 people</option>
+                        <option>21-50 people</option>
+                        <option>51+ people</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">Start Free 14-Day Trial</button>
+                <p style="text-align: center; margin-top: 1rem; font-size: .9rem; color: #666;">No credit card required</p>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Contact Sales Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Contact Sales</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <form onsubmit="event.preventDefault(); showContactSuccessModal();">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Work Email</label>
+                    <input type="email" class="form-input" placeholder="you@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Company Name</label>
+                    <input type="text" class="form-input" placeholder="Your company name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-input" rows="4" placeholder="Tell us about your requirements..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">Send Message</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">✅</div>
+            <div class="success-message">
+                <h3>Welcome to CloudSync!</h3>
+                <p>Check your email to complete your registration and start your free trial.</p>
+            </div>
+            <div style="background: #f9fafb; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <h4 style="margin-bottom: 1rem;">What's Next?</h4>
+                <ul class="feature-list">
+                    <li>Verify your email address</li>
+                    <li>Set up your workspace</li>
+                    <li>Invite your team members</li>
+                    <li>Start syncing your files</li>
+                </ul>
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="closeModal()">Got It!</button>
+        </div>
+    </div>
+    
+    <!-- Contact Success Modal -->
+    <div id="contactSuccessModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">📧</div>
+            <div class="success-message">
+                <h3>Message Sent!</h3>
+                <p>Our sales team will contact you within 24 hours.</p>
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+    
+    <div class="watermark">Kenkai Labs - Interactive Prototype</div>
+    
+    <script>
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+        
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function showFeatureModal(feature) {
+            const features = {
+                realtime: {
+                    title: '⚡ Real-time Sync',
+                    content: `
+                        <div class="feature-detail">
+                            <h3>Lightning-Fast Synchronization</h3>
+                            <p>Experience instant file synchronization across all your devices with our advanced delta sync technology.</p>
+                            <ul class="feature-list">
+                                <li>Sync in milliseconds, not seconds</li>
+                                <li>Only transfer changed data</li>
+                                <li>Work offline, sync when connected</li>
+                                <li>Automatic conflict resolution</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                security: {
+                    title: '🔒 Bank-level Security',
+                    content: `
+                        <div class="feature-detail">
+                            <h3>Enterprise-Grade Protection</h3>
+                            <p>Your data is protected with military-grade AES-256 encryption both in transit and at rest.</p>
+                            <ul class="feature-list">
+                                <li>End-to-end encryption</li>
+                                <li>Two-factor authentication</li>
+                                <li>SOC 2 Type II certified</li>
+                                <li>GDPR compliant</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                collaboration: {
+                    title: '👥 Team Collaboration',
+                    content: `
+                        <div class="feature-detail">
+                            <h3>Work Together Seamlessly</h3>
+                            <p>Collaborate in real-time with your team members, no matter where they are.</p>
+                            <ul class="feature-list">
+                                <li>Real-time co-editing</li>
+                                <li>Comments and mentions</li>
+                                <li>Version history</li>
+                                <li>File sharing and permissions</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                integration: {
+                    title: '🔗 App Integration',
+                    content: `
+                        <div class="feature-detail">
+                            <h3>Connect Your Tools</h3>
+                            <p>Integrate with over 1000 apps including Slack, Google Workspace, Microsoft 365, and more.</p>
+                            <ul class="feature-list">
+                                <li>Slack notifications</li>
+                                <li>Google Drive sync</li>
+                                <li>Microsoft 365 integration</li>
+                                <li>Custom API access</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                storage: {
+                    title: '💾 Unlimited Storage',
+                    content: `
+                        <div class="feature-detail">
+                            <h3>Never Run Out of Space</h3>
+                            <p>Store as many files as you need without worrying about storage limits.</p>
+                            <ul class="feature-list">
+                                <li>Truly unlimited storage</li>
+                                <li>No file size limits</li>
+                                <li>Automatic backups</li>
+                                <li>99.99% uptime SLA</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                support: {
+                    title: '🎯 24/7 Support',
+                    content: `
+                        <div class="feature-detail">
+                            <h3>Always Here to Help</h3>
+                            <p>Get expert help whenever you need it with our round-the-clock support team.</p>
+                            <ul class="feature-list">
+                                <li>24/7 live chat support</li>
+                                <li>Email support</li>
+                                <li>Phone support (Enterprise)</li>
+                                <li>Comprehensive documentation</li>
+                            </ul>
+                        </div>
+                    `
+                }
+            };
+            
+            document.getElementById('featureModalTitle').textContent = features[feature].title;
+            document.getElementById('featureModalContent').innerHTML = features[feature].content;
+            document.getElementById('featureModal').classList.add('active');
+        }
+        
+        function showPricingModal(plan) {
+            const plans = {
+                starter: {
+                    title: 'Starter Plan Details',
+                    content: `
+                        <div class="feature-detail">
+                            <h3>Perfect for Small Teams</h3>
+                            <p>Get started with all the essential features you need to collaborate effectively.</p>
+                            <ul class="feature-list">
+                                <li>100 GB storage per user</li>
+                                <li>Up to 5 team members</li>
+                                <li>Real-time sync</li>
+                                <li>Basic security features</li>
+                                <li>Email support</li>
+                                <li>Mobile and desktop apps</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                professional: {
+                    title: 'Professional Plan Details',
+                    content: `
+                        <div class="feature-detail">
+                            <h3>For Growing Teams</h3>
+                            <p>Unlock advanced features and unlimited collaboration for your entire team.</p>
+                            <ul class="feature-list">
+                                <li>1 TB storage per user</li>
+                                <li>Unlimited team members</li>
+                                <li>All Starter features</li>
+                                <li>Advanced security</li>
+                                <li>Priority support</li>
+                                <li>Advanced analytics</li>
+                                <li>Custom integrations</li>
+                                <li>Version history (unlimited)</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                enterprise: {
+                    title: 'Enterprise Plan Details',
+                    content: `
+                        <div class="feature-detail">
+                            <h3>For Large Organizations</h3>
+                            <p>Get enterprise-grade features, security, and support tailored to your needs.</p>
+                            <ul class="feature-list">
+                                <li>Unlimited storage</li>
+                                <li>Unlimited everything</li>
+                                <li>All Professional features</li>
+                                <li>SSO and SAML</li>
+                                <li>Advanced admin controls</li>
+                                <li>Dedicated support team</li>
+                                <li>99.99% uptime SLA</li>
+                                <li>Custom contracts</li>
+                                <li>On-premise deployment option</li>
+                            </ul>
+                        </div>
+                    `
+                }
+            };
+            
+            document.getElementById('pricingModalTitle').textContent = plans[plan].title;
+            document.getElementById('pricingModalContent').innerHTML = plans[plan].content;
+            document.getElementById('pricingModal').classList.add('active');
+        }
+        
+        function showSignupModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('signupModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showContactModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('contactModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showSuccessModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('successModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showContactSuccessModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('contactSuccessModal').classList.add('active');
+            }, 100);
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+        
+        // ESC key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,8 +1,10 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import TeamSection from "@/components/TeamSection";
+import StrengthsSection from "@/components/StrengthsSection";
+import FounderBanner from "@/components/FounderBanner";
 import CredibilitySection from "@/components/CredibilitySection";
+import TalentInterestForm from "@/components/TalentInterestForm";
 
 export const metadata: Metadata = {
   title: "About - Kenkai Labs | Expert Technology Consulting Team",
@@ -15,13 +17,13 @@ export default function AboutPage() {
       <Header />
       
       {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-gradient-to-br from-blue-50 via-white to-gray-50">
-        <div className="container-width section-padding">
+      <section className="pt-24 pb-8 bg-gradient-to-br from-blue-50 via-white to-gray-50">
+        <div className="container-width px-4 md:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
               About Kenkai Labs
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-gray-600">
               We&apos;re a team of experienced technology consultants dedicated to helping 
               businesses solve their most complex technical challenges through proven 
               methodologies and expert execution.
@@ -29,10 +31,11 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+  <FounderBanner />
 
       {/* Mission Section */}
-      <section className="section-padding bg-white">
-        <div className="container-width">
+      <section className="py-16 md:py-20 bg-white">
+        <div className="container-width px-4 md:px-8">
           <div className="max-w-4xl mx-auto text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
               Our Mission
@@ -78,8 +81,8 @@ export default function AboutPage() {
       </section>
 
       {/* Our Approach */}
-      <section id="approach" className="section-padding bg-gray-50">
-        <div className="container-width">
+      <section id="approach" className="py-16 md:py-20 bg-gray-50">
+        <div className="container-width px-4 md:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-12 text-center">
               Our Approach
@@ -161,7 +164,18 @@ export default function AboutPage() {
       </section>
 
       <CredibilitySection />
-      <TeamSection />
+      {/* Founder-led strengths replacing individual team profiles */}
+      <StrengthsSection />
+      {/* Hiring Interest (client form encapsulated to avoid server passing handlers) */}
+      <section className="py-16 md:py-20 bg-white" aria-labelledby="hiring-interest-heading">
+        <div className="container-width px-4 md:px-8">
+          <div className="max-w-3xl mx-auto text-center mb-10">
+            <h2 id="hiring-interest-heading" className="text-3xl font-bold text-gray-900 mb-4">We're Hiring Soon</h2>
+            <p className="text-gray-600 text-lg">We're expanding carefully. If you'd like to be considered when we open roles, leave your email and we'll reach out before public postings.</p>
+          </div>
+          <TalentInterestForm />
+        </div>
+      </section>
 
       <Footer />
     </main>

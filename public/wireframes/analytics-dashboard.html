@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - Interactive Prototype by Kenkai Labs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .header {
+            background: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: .5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .2s;
+            font-size: .9rem;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #333;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: #1e293b;
+            position: fixed;
+            top: 70px;
+            bottom: 0;
+            padding: 1.5rem 0;
+            color: #fff;
+        }
+        
+        .menu-section {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-title {
+            font-size: .75rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            padding: 0 1.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: .05em;
+        }
+        
+        .menu-item {
+            padding: .75rem 1.5rem;
+            cursor: pointer;
+            transition: background .2s;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+        
+        .menu-item:hover {
+            background: #334155;
+        }
+        
+        .menu-item.active {
+            background: #3b82f6;
+            border-left: 4px solid #fff;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            margin-top: 70px;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: .5rem;
+        }
+        
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .date-range select {
+            padding: .5rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            cursor: pointer;
+            transition: all .2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,.12);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: .9rem;
+            font-weight: 500;
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: .5rem;
+        }
+        
+        .stat-change {
+            font-size: .85rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        
+        .stat-change.positive {
+            color: #16a34a;
+        }
+        
+        .stat-change.negative {
+            color: #dc2626;
+        }
+        
+        .chart-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: .5rem;
+        }
+        
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            height: 250px;
+            padding: 1rem;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all .3s;
+        }
+        
+        .chart-bar:hover {
+            filter: brightness(1.2);
+            transform: scaleY(1.05);
+        }
+        
+        .chart-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: .75rem;
+            color: #6b7280;
+        }
+        
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #3b82f6 0deg 120deg,
+                #8b5cf6 120deg 240deg,
+                #ec4899 240deg 300deg,
+                #f59e0b 300deg 360deg
+            );
+            margin: 0 auto;
+        }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .9rem;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        .table-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f9fafb;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        tr:hover {
+            background: #f9fafb;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: .25rem .75rem;
+            border-radius: 12px;
+            font-size: .85rem;
+            font-weight: 500;
+        }
+        
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 700px;
+            width: 90%;
+            margin: 2rem;
+            animation: modalSlideIn .3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .modal-close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #6b7280;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background .2s;
+        }
+        
+        .modal-close:hover {
+            background: #f3f4f6;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: .5rem;
+            color: #374151;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: .75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color .2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .metric-detail {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .metric-detail-title {
+            font-size: .85rem;
+            color: #6b7280;
+            margin-bottom: .5rem;
+        }
+        
+        .metric-detail-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #3b82f6;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Overview Dashboard Screen -->
+    <div id="overviewScreen" class="screen active">
+        <div class="header">
+            <div class="logo">📊 Analytics Pro</div>
+            <div class="header-actions">
+                <select class="form-input" style="width: auto;">
+                    <option>Last 7 Days</option>
+                    <option>Last 30 Days</option>
+                    <option>Last 90 Days</option>
+                    <option>Custom Range</option>
+                </select>
+                <button class="btn btn-primary" onclick="showExportModal()">📥 Export</button>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer;"></div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="menu-section">
+                <div class="menu-title">Analytics</div>
+                <div class="menu-item active" onclick="showScreen('overviewScreen')">
+                    📊 Overview
+                </div>
+                <div class="menu-item" onclick="showScreen('reportsScreen')">
+                    📈 Reports
+                </div>
+                <div class="menu-item" onclick="showScreen('usersScreen')">
+                    👥 Users
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Data</div>
+                <div class="menu-item" onclick="showScreen('dataSourcesScreen')">
+                    🔗 Data Sources
+                </div>
+                <div class="menu-item">
+                    ⚙️ Settings
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Analytics Overview</h1>
+                <p style="color: #6b7280;">Real-time insights into your business performance</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card" onclick="showMetricModal('Total Revenue', '₹12,45,890')">
+                    <div class="stat-header">
+                        <div class="stat-label">Total Revenue</div>
+                        <div class="stat-icon" style="background: #dbeafe; color: #3b82f6;">💰</div>
+                    </div>
+                    <div class="stat-value">₹12.45L</div>
+                    <div class="stat-change positive">
+                        ↑ 23.5% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="showMetricModal('Active Users', '8,432')">
+                    <div class="stat-header">
+                        <div class="stat-label">Active Users</div>
+                        <div class="stat-icon" style="background: #dcfce7; color: #16a34a;">👥</div>
+                    </div>
+                    <div class="stat-value">8,432</div>
+                    <div class="stat-change positive">
+                        ↑ 12.3% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="showMetricModal('Conversion Rate', '3.8%')">
+                    <div class="stat-header">
+                        <div class="stat-label">Conversion Rate</div>
+                        <div class="stat-icon" style="background: #fef3c7; color: #f59e0b;">📈</div>
+                    </div>
+                    <div class="stat-value">3.8%</div>
+                    <div class="stat-change negative">
+                        ↓ 0.5% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="showMetricModal('Avg. Session', '4m 32s')">
+                    <div class="stat-header">
+                        <div class="stat-label">Avg. Session Time</div>
+                        <div class="stat-icon" style="background: #e9d5ff; color: #8b5cf6;">⏱️</div>
+                    </div>
+                    <div class="stat-value">4m 32s</div>
+                    <div class="stat-change positive">
+                        ↑ 8.2% from last month
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">Revenue Trend</div>
+                        <div class="chart-actions">
+                            <button class="btn btn-secondary">Week</button>
+                            <button class="btn btn-primary">Month</button>
+                        </div>
+                    </div>
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 60%;">
+                            <div class="chart-label">Mon</div>
+                        </div>
+                        <div class="chart-bar" style="height: 75%;">
+                            <div class="chart-label">Tue</div>
+                        </div>
+                        <div class="chart-bar" style="height: 55%;">
+                            <div class="chart-label">Wed</div>
+                        </div>
+                        <div class="chart-bar" style="height: 85%;">
+                            <div class="chart-label">Thu</div>
+                        </div>
+                        <div class="chart-bar" style="height: 70%;">
+                            <div class="chart-label">Fri</div>
+                        </div>
+                        <div class="chart-bar" style="height: 90%;">
+                            <div class="chart-label">Sat</div>
+                        </div>
+                        <div class="chart-bar" style="height: 80%;">
+                            <div class="chart-label">Sun</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">Traffic Sources</div>
+                        <button class="btn btn-secondary">Details</button>
+                    </div>
+                    <div class="pie-chart"></div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #3b82f6;"></div>
+                            <span>Direct (33%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #8b5cf6;"></div>
+                            <span>Organic (33%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ec4899;"></div>
+                            <span>Social (17%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #f59e0b;"></div>
+                            <span>Referral (17%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-container" style="margin-top: 1.5rem;">
+                <div class="chart-header">
+                    <div class="chart-title">Top Performing Pages</div>
+                    <button class="btn btn-primary" onclick="showScreen('reportsScreen')">View All</button>
+                </div>
+                <div class="table-container" style="padding: 0;">
+                    <table>
+                        <tr>
+                            <th>Page</th>
+                            <th>Views</th>
+                            <th>Avg. Time</th>
+                            <th>Bounce Rate</th>
+                            <th>Conversions</th>
+                        </tr>
+                        <tr>
+                            <td>/home</td>
+                            <td>12,453</td>
+                            <td>3m 24s</td>
+                            <td><span class="badge badge-success">32%</span></td>
+                            <td>486</td>
+                        </tr>
+                        <tr>
+                            <td>/products</td>
+                            <td>8,932</td>
+                            <td>5m 12s</td>
+                            <td><span class="badge badge-success">28%</span></td>
+                            <td>324</td>
+                        </tr>
+                        <tr>
+                            <td>/pricing</td>
+                            <td>6,721</td>
+                            <td>2m 45s</td>
+                            <td><span class="badge badge-warning">45%</span></td>
+                            <td>189</td>
+                        </tr>
+                        <tr>
+                            <td>/blog</td>
+                            <td>4,562</td>
+                            <td>6m 33s</td>
+                            <td><span class="badge badge-success">22%</span></td>
+                            <td>92</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reports Screen -->
+    <div id="reportsScreen" class="screen">
+        <div class="header">
+            <div class="logo">📊 Analytics Pro</div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="showScreen('overviewScreen')">Back to Overview</button>
+                <button class="btn btn-primary" onclick="showCreateReportModal()">+ Create Report</button>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer;"></div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="menu-section">
+                <div class="menu-title">Analytics</div>
+                <div class="menu-item" onclick="showScreen('overviewScreen')">
+                    📊 Overview
+                </div>
+                <div class="menu-item active" onclick="showScreen('reportsScreen')">
+                    📈 Reports
+                </div>
+                <div class="menu-item" onclick="showScreen('usersScreen')">
+                    👥 Users
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Data</div>
+                <div class="menu-item" onclick="showScreen('dataSourcesScreen')">
+                    🔗 Data Sources
+                </div>
+                <div class="menu-item">
+                    ⚙️ Settings
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Custom Reports</h1>
+                <p style="color: #6b7280;">Create and manage your custom analytics reports</p>
+            </div>
+            
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="stat-card" onclick="showReportModal('Sales Performance')">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: .5rem;">Sales Performance</div>
+                            <div style="color: #6b7280; font-size: .9rem;">Monthly revenue analysis</div>
+                        </div>
+                        <span style="background: #dcfce7; color: #166534; padding: .25rem .75rem; border-radius: 12px; font-size: .85rem;">Active</span>
+                    </div>
+                    <div style="color: #6b7280; font-size: .85rem;">Last updated: 2 hours ago</div>
+                </div>
+                
+                <div class="stat-card" onclick="showReportModal('User Engagement')">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: .5rem;">User Engagement</div>
+                            <div style="color: #6b7280; font-size: .9rem;">Activity and retention metrics</div>
+                        </div>
+                        <span style="background: #dcfce7; color: #166534; padding: .25rem .75rem; border-radius: 12px; font-size: .85rem;">Active</span>
+                    </div>
+                    <div style="color: #6b7280; font-size: .85rem;">Last updated: 5 hours ago</div>
+                </div>
+                
+                <div class="stat-card" onclick="showReportModal('Marketing ROI')">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: .5rem;">Marketing ROI</div>
+                            <div style="color: #6b7280; font-size: .9rem;">Campaign performance tracking</div>
+                        </div>
+                        <span style="background: #dcfce7; color: #166534; padding: .25rem .75rem; border-radius: 12px; font-size: .85rem;">Active</span>
+                    </div>
+                    <div style="color: #6b7280; font-size: .85rem;">Last updated: 1 day ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Users Screen -->
+    <div id="usersScreen" class="screen">
+        <div class="header">
+            <div class="logo">📊 Analytics Pro</div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="showScreen('overviewScreen')">Back to Overview</button>
+                <button class="btn btn-primary" onclick="showAddUserModal()">+ Add User</button>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer;"></div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="menu-section">
+                <div class="menu-title">Analytics</div>
+                <div class="menu-item" onclick="showScreen('overviewScreen')">
+                    📊 Overview
+                </div>
+                <div class="menu-item" onclick="showScreen('reportsScreen')">
+                    📈 Reports
+                </div>
+                <div class="menu-item active" onclick="showScreen('usersScreen')">
+                    👥 Users
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Data</div>
+                <div class="menu-item" onclick="showScreen('dataSourcesScreen')">
+                    🔗 Data Sources
+                </div>
+                <div class="menu-item">
+                    ⚙️ Settings
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">User Management</h1>
+                <p style="color: #6b7280;">Manage team access and permissions</p>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Last Active</th>
+                        <th>Actions</th>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">Sarah Johnson</td>
+                        <td>sarah@company.com</td>
+                        <td><span class="badge badge-success">Admin</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>2 hours ago</td>
+                        <td><button class="btn btn-secondary" onclick="showUserModal('Sarah Johnson', 'Admin')">View</button></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">Michael Chen</td>
+                        <td>michael@company.com</td>
+                        <td><span class="badge" style="background: #dbeafe; color: #1e40af;">Editor</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>5 hours ago</td>
+                        <td><button class="btn btn-secondary" onclick="showUserModal('Michael Chen', 'Editor')">View</button></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">Emma Williams</td>
+                        <td>emma@company.com</td>
+                        <td><span class="badge" style="background: #e5e7eb; color: #374151;">Viewer</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>1 day ago</td>
+                        <td><button class="btn btn-secondary" onclick="showUserModal('Emma Williams', 'Viewer')">View</button></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Data Sources Screen -->
+    <div id="dataSourcesScreen" class="screen">
+        <div class="header">
+            <div class="logo">📊 Analytics Pro</div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="showScreen('overviewScreen')">Back to Overview</button>
+                <button class="btn btn-primary" onclick="showAddDataSourceModal()">+ Connect Source</button>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer;"></div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="menu-section">
+                <div class="menu-title">Analytics</div>
+                <div class="menu-item" onclick="showScreen('overviewScreen')">
+                    📊 Overview
+                </div>
+                <div class="menu-item" onclick="showScreen('reportsScreen')">
+                    📈 Reports
+                </div>
+                <div class="menu-item" onclick="showScreen('usersScreen')">
+                    👥 Users
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Data</div>
+                <div class="menu-item active" onclick="showScreen('dataSourcesScreen')">
+                    🔗 Data Sources
+                </div>
+                <div class="menu-item">
+                    ⚙️ Settings
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Data Sources</h1>
+                <p style="color: #6b7280;">Connect and manage your data integrations</p>
+            </div>
+            
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="stat-card">
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <div class="stat-icon" style="background: #dbeafe; color: #3b82f6; font-size: 2rem;">🔗</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: .5rem;">Google Analytics</div>
+                            <div style="color: #6b7280; font-size: .9rem; margin-bottom: .75rem;">Website traffic and behavior</div>
+                            <span class="badge badge-success">Connected</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <div class="stat-icon" style="background: #dcfce7; color: #16a34a; font-size: 2rem;">📊</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: .5rem;">Stripe</div>
+                            <div style="color: #6b7280; font-size: .9rem; margin-bottom: .75rem;">Payment and revenue data</div>
+                            <span class="badge badge-success">Connected</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <div class="stat-icon" style="background: #fef3c7; color: #f59e0b; font-size: 2rem;">📧</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: .5rem;">SendGrid</div>
+                            <div style="color: #6b7280; font-size: .9rem; margin-bottom: .75rem;">Email campaign metrics</div>
+                            <span class="badge badge-success">Connected</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <div class="stat-icon" style="background: #e9d5ff; color: #8b5cf6; font-size: 2rem;">🗄️</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: .5rem;">PostgreSQL</div>
+                            <div style="color: #6b7280; font-size: .9rem; margin-bottom: .75rem;">Custom database queries</div>
+                            <span class="badge badge-warning">Pending</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Metric Detail Modal -->
+    <div id="metricModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="metricModalTitle">Total Revenue</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div class="metric-detail">
+                <div class="metric-detail-title">Current Value</div>
+                <div class="metric-detail-value" id="metricModalValue">₹12,45,890</div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="metric-detail">
+                    <div class="metric-detail-title">Previous Period</div>
+                    <div class="metric-detail-value" style="font-size: 1.25rem;">₹10,12,450</div>
+                </div>
+                <div class="metric-detail">
+                    <div class="metric-detail-title">Growth</div>
+                    <div class="metric-detail-value" style="font-size: 1.25rem; color: #16a34a;">+23.5%</div>
+                </div>
+            </div>
+            
+            <div style="margin: 1.5rem 0;">
+                <h3 style="margin-bottom: 1rem;">Breakdown by Source</h3>
+                <div style="display: flex; flex-direction: column; gap: .75rem;">
+                    <div style="display: flex; justify-content: space-between; padding: .75rem; background: #f9fafb; border-radius: 6px;">
+                        <span>Direct Sales</span>
+                        <strong>₹6,45,890</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: .75rem; background: #f9fafb; border-radius: 6px;">
+                        <span>Subscriptions</span>
+                        <strong>₹4,20,000</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: .75rem; background: #f9fafb; border-radius: 6px;">
+                        <span>Referrals</span>
+                        <strong>₹1,80,000</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%;" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+    
+    <!-- Create Report Modal -->
+    <div id="createReportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Custom Report</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); showReportCreatedModal();">
+                <div class="form-group">
+                    <label class="form-label">Report Name</label>
+                    <input type="text" class="form-input" placeholder="Enter report name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Report Type</label>
+                    <select class="form-input" required>
+                        <option value="">Select type</option>
+                        <option>Sales & Revenue</option>
+                        <option>User Engagement</option>
+                        <option>Marketing Performance</option>
+                        <option>Custom Metrics</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Data Source</label>
+                    <select class="form-input" required>
+                        <option value="">Select source</option>
+                        <option>Google Analytics</option>
+                        <option>Stripe</option>
+                        <option>SendGrid</option>
+                        <option>PostgreSQL</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Schedule</label>
+                    <select class="form-input" required>
+                        <option>Daily</option>
+                        <option>Weekly</option>
+                        <option>Monthly</option>
+                        <option>Custom</option>
+                    </select>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Report Detail Modal -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="reportModalTitle">Report Details</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Type</div>
+                        <div style="font-weight: 600;">Sales & Revenue</div>
+                    </div>
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Schedule</div>
+                        <div style="font-weight: 600;">Daily at 9 AM</div>
+                    </div>
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Data Source</div>
+                        <div style="font-weight: 600;">Stripe, Google Analytics</div>
+                    </div>
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Created By</div>
+                        <div style="font-weight: 600;">Sarah Johnson</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                <button class="btn btn-primary" onclick="alert('Report exported!')">Export Report</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Team Member</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); showUserAddedModal();">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" placeholder="Enter full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" placeholder="email@company.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select class="form-input" required>
+                        <option value="">Select role</option>
+                        <option>Admin</option>
+                        <option>Editor</option>
+                        <option>Viewer</option>
+                    </select>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Send Invitation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- User Detail Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="userModalName">User Details</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <div style="display: grid; gap: 1rem;">
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Email</div>
+                        <div style="font-weight: 600;">sarah@company.com</div>
+                    </div>
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Role</div>
+                        <div><span class="badge badge-success" id="userModalRole">Admin</span></div>
+                    </div>
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Last Active</div>
+                        <div style="font-weight: 600;">2 hours ago</div>
+                    </div>
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Member Since</div>
+                        <div style="font-weight: 600;">January 15, 2024</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                <button class="btn btn-primary">Edit User</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Data Source Modal -->
+    <div id="addDataSourceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Connect Data Source</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all .2s;" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 2rem;">📊</div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: .25rem;">Google Analytics</div>
+                            <div style="font-size: .85rem; color: #6b7280;">Website traffic and behavior</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all .2s;" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 2rem;">💳</div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: .25rem;">Stripe</div>
+                            <div style="font-size: .85rem; color: #6b7280;">Payment and revenue data</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all .2s;" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 2rem;">🗄️</div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: .25rem;">Custom Database</div>
+                            <div style="font-size: .85rem; color: #6b7280;">PostgreSQL, MySQL, MongoDB</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-secondary" style="width: 100%;" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+    
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Export Data</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Export Format</label>
+                <select class="form-input">
+                    <option>CSV</option>
+                    <option>Excel (XLSX)</option>
+                    <option>PDF Report</option>
+                    <option>JSON</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Date Range</label>
+                <select class="form-input">
+                    <option>Last 7 Days</option>
+                    <option>Last 30 Days</option>
+                    <option>Last 90 Days</option>
+                    <option>Custom Range</option>
+                </select>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="showExportSuccessModal()">Export</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modals -->
+    <div id="reportCreatedModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+            <h2 style="margin-bottom: .5rem;">Report Created!</h2>
+            <p style="color: #6b7280; margin-bottom: 2rem;">Your custom report has been created and scheduled.</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="closeModal(); showScreen('reportsScreen');">View Reports</button>
+        </div>
+    </div>
+    
+    <div id="userAddedModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+            <h2 style="margin-bottom: .5rem;">Invitation Sent!</h2>
+            <p style="color: #6b7280; margin-bottom: 2rem;">An invitation email has been sent to the new team member.</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="closeModal();">Close</button>
+        </div>
+    </div>
+    
+    <div id="exportSuccessModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📥</div>
+            <h2 style="margin-bottom: .5rem;">Export Ready!</h2>
+            <p style="color: #6b7280; margin-bottom: 2rem;">Your data export is ready for download.</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="closeModal();">Download</button>
+        </div>
+    </div>
+    
+    <div class="watermark">Kenkai Labs - Interactive Prototype</div>
+    
+    <script>
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+        
+        function showMetricModal(title, value) {
+            document.getElementById('metricModalTitle').textContent = title;
+            document.getElementById('metricModalValue').textContent = value;
+            document.getElementById('metricModal').classList.add('active');
+        }
+        
+        function showCreateReportModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('createReportModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showReportModal(title) {
+            document.getElementById('reportModalTitle').textContent = title;
+            document.getElementById('reportModal').classList.add('active');
+        }
+        
+        function showAddUserModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('addUserModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showUserModal(name, role) {
+            document.getElementById('userModalName').textContent = name;
+            document.getElementById('userModalRole').textContent = role;
+            document.getElementById('userModal').classList.add('active');
+        }
+        
+        function showAddDataSourceModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('addDataSourceModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showExportModal() {
+            document.getElementById('exportModal').classList.add('active');
+        }
+        
+        function showReportCreatedModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('reportCreatedModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showUserAddedModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('userAddedModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showExportSuccessModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('exportSuccessModal').classList.add('active');
+            }, 100);
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+        
+        // ESC key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

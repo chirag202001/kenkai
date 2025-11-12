@@ -5,7 +5,7 @@ import ServicesOverview from "@/components/ServicesOverview";
 import ProcessSection from "@/components/ProcessSection";
 import LeadCaptureSection from "@/components/LeadCaptureSection";
 import CredibilitySection from "@/components/CredibilitySection";
-import TeamSection from "@/components/TeamSection";
+import StrengthsSection from "@/components/StrengthsSection";
 import ResourceSection from "@/components/ResourceSection";
 
 export default function Home() {
@@ -16,8 +16,8 @@ export default function Home() {
       <ServicesOverview />
       <ProcessSection />
       <LeadCaptureSection />
-      <CredibilitySection />
-      <TeamSection />
+  <CredibilitySection />
+  <StrengthsSection />
       <ResourceSection />
       <Footer />
     </main>

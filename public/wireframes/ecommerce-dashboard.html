@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Admin - Interactive Prototype by Kenkai Labs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .wireframe-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: #2563eb;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #1e40af;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: #1e293b;
+            color: #fff;
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+            padding: 1rem 0;
+            overflow-y: auto;
+        }
+        
+        .menu-item {
+            padding: .75rem 1.5rem;
+            cursor: pointer;
+            transition: background .2s;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+        
+        .menu-item:hover {
+            background: #334155;
+        }
+        
+        .menu-item.active {
+            background: #3b82f6;
+            border-left: 4px solid #fff;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+            margin-bottom: .5rem;
+        }
+        
+        .breadcrumb {
+            color: #6b7280;
+            font-size: .9rem;
+        }
+        
+        .breadcrumb span {
+            cursor: pointer;
+        }
+        
+        .breadcrumb span:hover {
+            color: #2563eb;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: #fff;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,.1);
+            border-color: #3b82f6;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin: .5rem 0;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: .9rem;
+        }
+        
+        .stat-change {
+            font-size: .85rem;
+            margin-top: .5rem;
+        }
+        
+        .stat-change.positive {
+            color: #16a34a;
+        }
+        
+        .stat-change.negative {
+            color: #dc2626;
+        }
+        
+        .table-container {
+            background: #fff;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f3f4f6;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        tr:hover {
+            background: #f9fafb;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: .25rem .75rem;
+            border-radius: 12px;
+            font-size: .85rem;
+            font-weight: 500;
+        }
+        
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .btn {
+            padding: .5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all .2s;
+            font-size: .9rem;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: scale(1.05);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: #fff;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .btn-success {
+            background: #16a34a;
+            color: #fff;
+        }
+        
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalFadeIn .3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .modal-close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #6b7280;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background .2s;
+        }
+        
+        .modal-close:hover {
+            background: #f3f4f6;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: .5rem;
+            color: #374151;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: .75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color .2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .modal-detail {
+            margin-bottom: 1rem;
+            padding: .75rem;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+        
+        .modal-detail strong {
+            color: #374151;
+            display: inline-block;
+            min-width: 120px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .search-bar {
+            padding: .75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            width: 300px;
+            font-size: .9rem;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2563eb;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+            z-index: 999;
+        }
+        
+        .product-image {
+            width: 50px;
+            height: 50px;
+            background: #e5e7eb;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: .5rem;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Dashboard Screen -->
+    <div id="dashboard" class="screen active">
+        <div class="wireframe-container">
+            <div class="header">
+                <div class="logo">🛒 ShopAdmin Pro</div>
+                <div class="user-info">
+                    <span>👤 Admin User</span>
+                    <button class="btn btn-secondary">Logout</button>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="menu-item active" onclick="showScreen('dashboard')">
+                    📊 Dashboard
+                </div>
+                <div class="menu-item" onclick="showScreen('products')">
+                    📦 Products
+                </div>
+                <div class="menu-item" onclick="showScreen('orders')">
+                    🛍️ Orders
+                </div>
+                <div class="menu-item" onclick="showScreen('customers')">
+                    👥 Customers
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <div class="breadcrumb">
+                        <span onclick="showScreen('dashboard')">Home</span> / Dashboard
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="showScreen('orders')">
+                        <div class="stat-label">Total Revenue</div>
+                        <div class="stat-value">₹2,45,890</div>
+                        <div class="stat-change positive">↑ 12.5% from last month</div>
+                    </div>
+                    <div class="stat-card" onclick="showScreen('orders')">
+                        <div class="stat-label">Orders</div>
+                        <div class="stat-value">127</div>
+                        <div class="stat-change positive">↑ 8 new orders today</div>
+                    </div>
+                    <div class="stat-card" onclick="showScreen('products')">
+                        <div class="stat-label">Products</div>
+                        <div class="stat-value">48</div>
+                        <div class="stat-change">3 low stock items</div>
+                    </div>
+                    <div class="stat-card" onclick="showScreen('customers')">
+                        <div class="stat-label">Customers</div>
+                        <div class="stat-value">832</div>
+                        <div class="stat-change positive">↑ 24 new this week</div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2>Recent Orders</h2>
+                        <button class="btn btn-primary" onclick="showScreen('orders')">View All Orders</button>
+                    </div>
+                    <table>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td>#ORD-1234</td>
+                            <td>Rajesh Kumar</td>
+                            <td>₹3,450</td>
+                            <td><span class="badge badge-success">Delivered</span></td>
+                            <td><button class="btn btn-primary" onclick="showOrderModal(1234, 'Rajesh Kumar', '3,450', 'Delivered')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-1235</td>
+                            <td>Priya Sharma</td>
+                            <td>₹5,200</td>
+                            <td><span class="badge badge-warning">Processing</span></td>
+                            <td><button class="btn btn-primary" onclick="showOrderModal(1235, 'Priya Sharma', '5,200', 'Processing')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-1236</td>
+                            <td>Amit Patel</td>
+                            <td>₹2,100</td>
+                            <td><span class="badge badge-info">Shipped</span></td>
+                            <td><button class="btn btn-primary" onclick="showOrderModal(1236, 'Amit Patel', '2,100', 'Shipped')">View Details</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Products Screen -->
+    <div id="products" class="screen">
+        <div class="wireframe-container">
+            <div class="header">
+                <div class="logo">🛒 ShopAdmin Pro</div>
+                <div class="user-info">
+                    <span>👤 Admin User</span>
+                    <button class="btn btn-secondary">Logout</button>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="menu-item" onclick="showScreen('dashboard')">
+                    📊 Dashboard
+                </div>
+                <div class="menu-item active" onclick="showScreen('products')">
+                    📦 Products
+                </div>
+                <div class="menu-item" onclick="showScreen('orders')">
+                    🛍️ Orders
+                </div>
+                <div class="menu-item" onclick="showScreen('customers')">
+                    👥 Customers
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="page-header">
+                    <h1>Products</h1>
+                    <div class="breadcrumb">
+                        <span onclick="showScreen('dashboard')">Home</span> / Products
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <input type="text" class="search-bar" placeholder="Search products...">
+                    <button class="btn btn-primary" onclick="showAddProductModal()">+ Add Product</button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Image</th>
+                            <th>Product Name</th>
+                            <th>SKU</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr>
+                            <td><span class="product-image"></span></td>
+                            <td>Wireless Headphones</td>
+                            <td>WH-001</td>
+                            <td>₹2,999</td>
+                            <td>145</td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary" onclick="showEditProductModal('Wireless Headphones', 'WH-001', '2999', '145')">Edit</button>
+                                    <button class="btn btn-danger">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="product-image"></span></td>
+                            <td>Smartphone Case</td>
+                            <td>SC-045</td>
+                            <td>₹599</td>
+                            <td>8</td>
+                            <td><span class="badge badge-warning">Low Stock</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary" onclick="showEditProductModal('Smartphone Case', 'SC-045', '599', '8')">Edit</button>
+                                    <button class="btn btn-danger">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="product-image"></span></td>
+                            <td>Laptop Stand</td>
+                            <td>LS-022</td>
+                            <td>₹1,499</td>
+                            <td>32</td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary" onclick="showEditProductModal('Laptop Stand', 'LS-022', '1499', '32')">Edit</button>
+                                    <button class="btn btn-danger">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Orders Screen -->
+    <div id="orders" class="screen">
+        <div class="wireframe-container">
+            <div class="header">
+                <div class="logo">🛒 ShopAdmin Pro</div>
+                <div class="user-info">
+                    <span>👤 Admin User</span>
+                    <button class="btn btn-secondary">Logout</button>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="menu-item" onclick="showScreen('dashboard')">
+                    📊 Dashboard
+                </div>
+                <div class="menu-item" onclick="showScreen('products')">
+                    📦 Products
+                </div>
+                <div class="menu-item active" onclick="showScreen('orders')">
+                    🛍️ Orders
+                </div>
+                <div class="menu-item" onclick="showScreen('customers')">
+                    👥 Customers
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="page-header">
+                    <h1>Orders</h1>
+                    <div class="breadcrumb">
+                        <span onclick="showScreen('dashboard')">Home</span> / Orders
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <input type="text" class="search-bar" placeholder="Search orders...">
+                    <select class="form-input" style="width: 200px;">
+                        <option>All Statuses</option>
+                        <option>Processing</option>
+                        <option>Shipped</option>
+                        <option>Delivered</option>
+                    </select>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr>
+                            <td>#ORD-1234</td>
+                            <td>Rajesh Kumar</td>
+                            <td>2024-01-15</td>
+                            <td>₹3,450</td>
+                            <td><span class="badge badge-success">Delivered</span></td>
+                            <td><button class="btn btn-primary" onclick="showOrderModal(1234, 'Rajesh Kumar', '3,450', 'Delivered')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-1235</td>
+                            <td>Priya Sharma</td>
+                            <td>2024-01-16</td>
+                            <td>₹5,200</td>
+                            <td><span class="badge badge-warning">Processing</span></td>
+                            <td><button class="btn btn-primary" onclick="showOrderModal(1235, 'Priya Sharma', '5,200', 'Processing')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-1236</td>
+                            <td>Amit Patel</td>
+                            <td>2024-01-16</td>
+                            <td>₹2,100</td>
+                            <td><span class="badge badge-info">Shipped</span></td>
+                            <td><button class="btn btn-primary" onclick="showOrderModal(1236, 'Amit Patel', '2,100', 'Shipped')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-1237</td>
+                            <td>Sneha Reddy</td>
+                            <td>2024-01-17</td>
+                            <td>₹4,890</td>
+                            <td><span class="badge badge-warning">Processing</span></td>
+                            <td><button class="btn btn-primary" onclick="showOrderModal(1237, 'Sneha Reddy', '4,890', 'Processing')">View Details</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Customers Screen -->
+    <div id="customers" class="screen">
+        <div class="wireframe-container">
+            <div class="header">
+                <div class="logo">🛒 ShopAdmin Pro</div>
+                <div class="user-info">
+                    <span>👤 Admin User</span>
+                    <button class="btn btn-secondary">Logout</button>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="menu-item" onclick="showScreen('dashboard')">
+                    📊 Dashboard
+                </div>
+                <div class="menu-item" onclick="showScreen('products')">
+                    📦 Products
+                </div>
+                <div class="menu-item" onclick="showScreen('orders')">
+                    🛍️ Orders
+                </div>
+                <div class="menu-item active" onclick="showScreen('customers')">
+                    👥 Customers
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="page-header">
+                    <h1>Customers</h1>
+                    <div class="breadcrumb">
+                        <span onclick="showScreen('dashboard')">Home</span> / Customers
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <input type="text" class="search-bar" placeholder="Search customers...">
+                    <button class="btn btn-primary" onclick="showAddCustomerModal()">+ Add Customer</button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Total Orders</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr>
+                            <td>#CUST-501</td>
+                            <td>Rajesh Kumar</td>
+                            <td>rajesh@email.com</td>
+                            <td>+91 98765 43210</td>
+                            <td>12</td>
+                            <td><button class="btn btn-primary" onclick="showCustomerModal('Rajesh Kumar', 'rajesh@email.com', '+91 98765 43210', '12')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#CUST-502</td>
+                            <td>Priya Sharma</td>
+                            <td>priya@email.com</td>
+                            <td>+91 98765 43211</td>
+                            <td>8</td>
+                            <td><button class="btn btn-primary" onclick="showCustomerModal('Priya Sharma', 'priya@email.com', '+91 98765 43211', '8')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#CUST-503</td>
+                            <td>Amit Patel</td>
+                            <td>amit@email.com</td>
+                            <td>+91 98765 43212</td>
+                            <td>5</td>
+                            <td><button class="btn btn-primary" onclick="showCustomerModal('Amit Patel', 'amit@email.com', '+91 98765 43212', '5')">View Details</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Order Details</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-detail">
+                <strong>Order ID:</strong> <span id="modalOrderId"></span>
+            </div>
+            <div class="modal-detail">
+                <strong>Customer:</strong> <span id="modalOrderCustomer"></span>
+            </div>
+            <div class="modal-detail">
+                <strong>Amount:</strong> <span id="modalOrderAmount"></span>
+            </div>
+            <div class="modal-detail">
+                <strong>Status:</strong> <span id="modalOrderStatus"></span>
+            </div>
+            <div class="modal-detail">
+                <strong>Items:</strong>
+                <ul style="margin-top: .5rem; margin-left: 1.5rem;">
+                    <li>Wireless Headphones x1 - ₹2,999</li>
+                    <li>Phone Case x1 - ₹599</li>
+                </ul>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-success">Mark as Shipped</button>
+                <button class="btn btn-primary">Send Email</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Product</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Product Name</label>
+                <input type="text" class="form-input" placeholder="Enter product name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">SKU</label>
+                <input type="text" class="form-input" placeholder="Enter SKU">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Price (₹)</label>
+                <input type="number" class="form-input" placeholder="Enter price">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Stock Quantity</label>
+                <input type="number" class="form-input" placeholder="Enter quantity">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-input" rows="3" placeholder="Enter product description"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-success" onclick="alert('Product added successfully!'); closeModal();">Add Product</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Product Modal -->
+    <div id="editProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Product</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Product Name</label>
+                <input type="text" class="form-input" id="editProductName">
+            </div>
+            <div class="form-group">
+                <label class="form-label">SKU</label>
+                <input type="text" class="form-input" id="editProductSKU">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Price (₹)</label>
+                <input type="number" class="form-input" id="editProductPrice">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Stock Quantity</label>
+                <input type="number" class="form-input" id="editProductStock">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-success" onclick="alert('Product updated successfully!'); closeModal();">Save Changes</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Customer Details Modal -->
+    <div id="customerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Customer Details</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-detail">
+                <strong>Name:</strong> <span id="modalCustomerName"></span>
+            </div>
+            <div class="modal-detail">
+                <strong>Email:</strong> <span id="modalCustomerEmail"></span>
+            </div>
+            <div class="modal-detail">
+                <strong>Phone:</strong> <span id="modalCustomerPhone"></span>
+            </div>
+            <div class="modal-detail">
+                <strong>Total Orders:</strong> <span id="modalCustomerOrders"></span>
+            </div>
+            <div class="modal-detail">
+                <strong>Lifetime Value:</strong> ₹45,230
+            </div>
+            <div class="modal-detail">
+                <strong>Member Since:</strong> January 2023
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary">View Orders</button>
+                <button class="btn btn-primary">Send Email</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Customer Modal -->
+    <div id="addCustomerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Customer</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" placeholder="Enter full name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input type="tel" class="form-input" placeholder="Enter phone number">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <textarea class="form-input" rows="3" placeholder="Enter address"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-success" onclick="alert('Customer added successfully!'); closeModal();">Add Customer</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="watermark">Kenkai Labs - Interactive Prototype</div>
+    
+    <script>
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Remove active state from all menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected screen
+            document.getElementById(screenId).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+        
+        function showOrderModal(orderId, customer, amount, status) {
+            document.getElementById('modalOrderId').textContent = '#ORD-' + orderId;
+            document.getElementById('modalOrderCustomer').textContent = customer;
+            document.getElementById('modalOrderAmount').textContent = '₹' + amount;
+            document.getElementById('modalOrderStatus').textContent = status;
+            document.getElementById('orderModal').classList.add('active');
+        }
+        
+        function showAddProductModal() {
+            document.getElementById('addProductModal').classList.add('active');
+        }
+        
+        function showEditProductModal(name, sku, price, stock) {
+            document.getElementById('editProductName').value = name;
+            document.getElementById('editProductSKU').value = sku;
+            document.getElementById('editProductPrice').value = price;
+            document.getElementById('editProductStock').value = stock;
+            document.getElementById('editProductModal').classList.add('active');
+        }
+        
+        function showCustomerModal(name, email, phone, orders) {
+            document.getElementById('modalCustomerName').textContent = name;
+            document.getElementById('modalCustomerEmail').textContent = email;
+            document.getElementById('modalCustomerPhone').textContent = phone;
+            document.getElementById('modalCustomerOrders').textContent = orders;
+            document.getElementById('customerModal').classList.add('active');
+        }
+        
+        function showAddCustomerModal() {
+            document.getElementById('addCustomerModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+        
+        // ESC key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

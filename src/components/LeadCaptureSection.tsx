@@ -34,8 +34,8 @@ const LeadCaptureSection = () => {
 
   if (isSubmitted) {
     return (
-      <section className="section-padding bg-gradient-to-br from-blue-600 to-purple-700">
-        <div className="container-width">
+      <section className="py-16 md:py-20 bg-gradient-to-br from-blue-600 to-purple-700">
+        <div className="container-width px-4 md:px-8">
           <div className="max-w-4xl mx-auto text-center text-white">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-12">
               <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-6" />
@@ -54,8 +54,8 @@ const LeadCaptureSection = () => {
   }
 
   return (
-    <section className="section-padding bg-gradient-to-br from-blue-600 to-purple-700">
-      <div className="container-width">
+    <section className="py-16 md:py-20 bg-gradient-to-br from-blue-600 to-purple-700">
+      <div className="container-width px-4 md:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2">

@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow PM - Interactive Prototype by Kenkai Labs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .header {
+            background: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #6366f1;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: .5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .2s;
+            font-size: .9rem;
+        }
+        
+        .btn-primary {
+            background: #6366f1;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #333;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: #fff;
+            position: fixed;
+            top: 70px;
+            bottom: 0;
+            padding: 1rem;
+            border-right: 1px solid #e5e7eb;
+        }
+        
+        .workspace-selector {
+            padding: .75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .menu-section {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-title {
+            font-size: .75rem;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            margin-bottom: .75rem;
+            letter-spacing: .05em;
+        }
+        
+        .menu-item {
+            padding: .75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background .2s;
+            margin-bottom: .25rem;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: #eef2ff;
+            color: #6366f1;
+            font-weight: 600;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            margin-top: 70px;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: .5rem;
+        }
+        
+        .breadcrumb {
+            color: #6b7280;
+            font-size: .9rem;
+        }
+        
+        .breadcrumb span {
+            cursor: pointer;
+        }
+        
+        .breadcrumb span:hover {
+            color: #6366f1;
+        }
+        
+        .board {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 2rem;
+        }
+        
+        .column {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 1rem;
+            min-width: 320px;
+            max-width: 320px;
+        }
+        
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .column-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .task-count {
+            background: #e5e7eb;
+            padding: .25rem .5rem;
+            border-radius: 12px;
+            font-size: .85rem;
+            font-weight: 600;
+        }
+        
+        .task-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: .75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+            cursor: pointer;
+            transition: all .2s;
+        }
+        
+        .task-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,.12);
+            transform: translateY(-2px);
+        }
+        
+        .task-title {
+            font-weight: 600;
+            margin-bottom: .5rem;
+        }
+        
+        .task-desc {
+            font-size: .85rem;
+            color: #6b7280;
+            margin-bottom: .75rem;
+        }
+        
+        .task-meta {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+        }
+        
+        .task-label {
+            padding: .25rem .5rem;
+            border-radius: 4px;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+        
+        .label-bug {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .label-feature {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .label-urgent {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .label-enhancement {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .task-assignee {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: .75rem;
+            font-weight: 700;
+        }
+        
+        .add-task-btn {
+            width: 100%;
+            padding: .75rem;
+            background: #fff;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        
+        .add-task-btn:hover {
+            border-color: #6366f1;
+            color: #6366f1;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: .9rem;
+            margin-bottom: .5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .list-view {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+        }
+        
+        .list-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: .75rem 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .list-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        
+        .list-row:hover {
+            background: #f9fafb;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            margin: 2rem;
+            animation: modalSlideIn .3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .modal-close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #6b7280;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background .2s;
+        }
+        
+        .modal-close:hover {
+            background: #f3f4f6;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: .5rem;
+            color: #374151;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: .75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color .2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+        
+        .task-detail-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-weight: 700;
+            margin-bottom: .75rem;
+            color: #1e293b;
+        }
+        
+        .comment-list {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .comment {
+            background: #fff;
+            padding: .75rem;
+            border-radius: 6px;
+            margin-bottom: .5rem;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            font-size: .85rem;
+            margin-bottom: .25rem;
+        }
+        
+        .comment-text {
+            font-size: .9rem;
+            color: #6b7280;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #6366f1;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Board View Screen -->
+    <div id="boardScreen" class="screen active">
+        <div class="header">
+            <div class="logo">📋 TaskFlow</div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="showScreen('listScreen')">List View</button>
+                <button class="btn btn-primary" onclick="showAddTaskModal()">+ New Task</button>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer;"></div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="workspace-selector">🏢 My Workspace</div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Views</div>
+                <div class="menu-item active" onclick="showScreen('boardScreen')">
+                    📊 Board
+                </div>
+                <div class="menu-item" onclick="showScreen('listScreen')">
+                    📝 List
+                </div>
+                <div class="menu-item" onclick="showScreen('dashboardScreen')">
+                    📈 Dashboard
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Projects</div>
+                <div class="menu-item">
+                    🚀 Website Redesign
+                </div>
+                <div class="menu-item">
+                    📱 Mobile App
+                </div>
+                <div class="menu-item">
+                    🔧 Bug Fixes
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Website Redesign</h1>
+                <div class="breadcrumb">
+                    <span onclick="showScreen('dashboardScreen')">Dashboard</span> / Board
+                </div>
+            </div>
+            
+            <div class="board">
+                <div class="column">
+                    <div class="column-header">
+                        <div class="column-title">📝 To Do</div>
+                        <div class="task-count">4</div>
+                    </div>
+                    
+                    <div class="task-card" onclick="showTaskModal('Create Landing Page', 'Design and develop new landing page', 'feature')">
+                        <div class="task-title">Create Landing Page</div>
+                        <div class="task-desc">Design and develop new landing page with modern UI</div>
+                        <div class="task-meta">
+                            <span class="task-label label-feature">Feature</span>
+                            <div class="task-assignee">SK</div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" onclick="showTaskModal('Update Navigation', 'Improve site navigation', 'enhancement')">
+                        <div class="task-title">Update Navigation</div>
+                        <div class="task-desc">Improve site navigation for better UX</div>
+                        <div class="task-meta">
+                            <span class="task-label label-enhancement">Enhancement</span>
+                            <div class="task-assignee" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" onclick="showTaskModal('Add Contact Form', 'Create contact form', 'feature')">
+                        <div class="task-title">Add Contact Form</div>
+                        <div class="task-desc">Create contact form with validation</div>
+                        <div class="task-meta">
+                            <span class="task-label label-feature">Feature</span>
+                            <div class="task-assignee" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">PR</div>
+                        </div>
+                    </div>
+                    
+                    <button class="add-task-btn" onclick="showAddTaskModal()">+ Add Task</button>
+                </div>
+                
+                <div class="column">
+                    <div class="column-header">
+                        <div class="column-title">🔄 In Progress</div>
+                        <div class="task-count">3</div>
+                    </div>
+                    
+                    <div class="task-card" onclick="showTaskModal('Responsive Design', 'Make site mobile friendly', 'feature')">
+                        <div class="task-title">Responsive Design</div>
+                        <div class="task-desc">Make site mobile friendly</div>
+                        <div class="task-meta">
+                            <span class="task-label label-feature">Feature</span>
+                            <div class="task-assignee">SK</div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" onclick="showTaskModal('Fix Header Bug', 'Header overlapping content', 'bug')">
+                        <div class="task-title">Fix Header Bug</div>
+                        <div class="task-desc">Header overlapping content on scroll</div>
+                        <div class="task-meta">
+                            <span class="task-label label-bug">Bug</span>
+                            <span class="task-label label-urgent">Urgent</span>
+                            <div class="task-assignee" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">AM</div>
+                        </div>
+                    </div>
+                    
+                    <button class="add-task-btn" onclick="showAddTaskModal()">+ Add Task</button>
+                </div>
+                
+                <div class="column">
+                    <div class="column-header">
+                        <div class="column-title">✅ Done</div>
+                        <div class="task-count">5</div>
+                    </div>
+                    
+                    <div class="task-card" onclick="showTaskModal('Setup Project', 'Initialize repository', 'feature')">
+                        <div class="task-title">Setup Project</div>
+                        <div class="task-desc">Initialize repository and dependencies</div>
+                        <div class="task-meta">
+                            <span class="task-label label-feature">Feature</span>
+                            <div class="task-assignee">SK</div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" onclick="showTaskModal('Create Design System', 'Define colors and typography', 'feature')">
+                        <div class="task-title">Create Design System</div>
+                        <div class="task-desc">Define colors, typography, and components</div>
+                        <div class="task-meta">
+                            <span class="task-label label-feature">Feature</span>
+                            <div class="task-assignee" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">PR</div>
+                        </div>
+                    </div>
+                    
+                    <button class="add-task-btn" onclick="showAddTaskModal()">+ Add Task</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- List View Screen -->
+    <div id="listScreen" class="screen">
+        <div class="header">
+            <div class="logo">📋 TaskFlow</div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="showScreen('boardScreen')">Board View</button>
+                <button class="btn btn-primary" onclick="showAddTaskModal()">+ New Task</button>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer;"></div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="workspace-selector">🏢 My Workspace</div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Views</div>
+                <div class="menu-item" onclick="showScreen('boardScreen')">
+                    📊 Board
+                </div>
+                <div class="menu-item active" onclick="showScreen('listScreen')">
+                    📝 List
+                </div>
+                <div class="menu-item" onclick="showScreen('dashboardScreen')">
+                    📈 Dashboard
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Projects</div>
+                <div class="menu-item">
+                    🚀 Website Redesign
+                </div>
+                <div class="menu-item">
+                    📱 Mobile App
+                </div>
+                <div class="menu-item">
+                    🔧 Bug Fixes
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">All Tasks</h1>
+                <div class="breadcrumb">
+                    <span onclick="showScreen('dashboardScreen')">Dashboard</span> / List
+                </div>
+            </div>
+            
+            <div class="list-view">
+                <div class="list-header">
+                    <div>Task</div>
+                    <div>Status</div>
+                    <div>Priority</div>
+                    <div>Assignee</div>
+                    <div>Due Date</div>
+                </div>
+                
+                <div class="list-row" onclick="showTaskModal('Create Landing Page', 'Design and develop new landing page', 'feature')">
+                    <div style="font-weight: 600;">Create Landing Page</div>
+                    <div><span class="task-label label-feature">To Do</span></div>
+                    <div><span class="task-label label-urgent">High</span></div>
+                    <div>Sarah K.</div>
+                    <div>Dec 15</div>
+                </div>
+                
+                <div class="list-row" onclick="showTaskModal('Responsive Design', 'Make site mobile friendly', 'feature')">
+                    <div style="font-weight: 600;">Responsive Design</div>
+                    <div><span class="task-label label-enhancement">In Progress</span></div>
+                    <div><span class="task-label label-feature">Medium</span></div>
+                    <div>Sarah K.</div>
+                    <div>Dec 18</div>
+                </div>
+                
+                <div class="list-row" onclick="showTaskModal('Fix Header Bug', 'Header overlapping content', 'bug')">
+                    <div style="font-weight: 600;">Fix Header Bug</div>
+                    <div><span class="task-label label-enhancement">In Progress</span></div>
+                    <div><span class="task-label label-bug">Urgent</span></div>
+                    <div>Alex M.</div>
+                    <div>Dec 10</div>
+                </div>
+                
+                <div class="list-row" onclick="showTaskModal('Update Navigation', 'Improve site navigation', 'enhancement')">
+                    <div style="font-weight: 600;">Update Navigation</div>
+                    <div><span class="task-label label-feature">To Do</span></div>
+                    <div><span class="task-label label-feature">Medium</span></div>
+                    <div>Alex M.</div>
+                    <div>Dec 20</div>
+                </div>
+                
+                <div class="list-row" onclick="showTaskModal('Setup Project', 'Initialize repository', 'feature')">
+                    <div style="font-weight: 600;">Setup Project</div>
+                    <div><span class="task-label label-enhancement">Done</span></div>
+                    <div><span class="task-label label-feature">High</span></div>
+                    <div>Sarah K.</div>
+                    <div>Dec 1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen" class="screen">
+        <div class="header">
+            <div class="logo">📋 TaskFlow</div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="showScreen('boardScreen')">Board View</button>
+                <button class="btn btn-primary" onclick="showAddTaskModal()">+ New Task</button>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer;"></div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="workspace-selector">🏢 My Workspace</div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Views</div>
+                <div class="menu-item" onclick="showScreen('boardScreen')">
+                    📊 Board
+                </div>
+                <div class="menu-item" onclick="showScreen('listScreen')">
+                    📝 List
+                </div>
+                <div class="menu-item active" onclick="showScreen('dashboardScreen')">
+                    📈 Dashboard
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Projects</div>
+                <div class="menu-item">
+                    🚀 Website Redesign
+                </div>
+                <div class="menu-item">
+                    📱 Mobile App
+                </div>
+                <div class="menu-item">
+                    🔧 Bug Fixes
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Dashboard</h1>
+                <div class="breadcrumb">
+                    <span onclick="showScreen('dashboardScreen')">Dashboard</span>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Tasks</div>
+                    <div class="stat-value">12</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-value">3</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value">5</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Overdue</div>
+                    <div class="stat-value" style="color: #dc2626;">1</div>
+                </div>
+            </div>
+            
+            <div class="list-view">
+                <h2 style="margin-bottom: 1.5rem;">Recent Activity</h2>
+                <div class="comment-list">
+                    <div class="comment">
+                        <div class="comment-author">Sarah K. completed "Setup Project"</div>
+                        <div class="comment-text">2 hours ago</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-author">Alex M. started "Fix Header Bug"</div>
+                        <div class="comment-text">5 hours ago</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-author">Priya R. commented on "Create Landing Page"</div>
+                        <div class="comment-text">Yesterday</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Task Detail Modal -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="taskModalTitle">Task Details</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div class="task-detail-section">
+                <div class="section-title">Description</div>
+                <p id="taskModalDesc" style="color: #6b7280;">Design and develop new landing page with modern UI</p>
+            </div>
+            
+            <div class="task-detail-section">
+                <div class="section-title">Details</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background: #f9fafb; padding: 1rem; border-radius: 8px;">
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Status</div>
+                        <span id="taskModalStatus" class="task-label label-feature">To Do</span>
+                    </div>
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Assignee</div>
+                        <div>Sarah K.</div>
+                    </div>
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Priority</div>
+                        <span class="task-label label-urgent">High</span>
+                    </div>
+                    <div>
+                        <div style="font-size: .85rem; color: #6b7280; margin-bottom: .25rem;">Due Date</div>
+                        <div>Dec 15, 2024</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="task-detail-section">
+                <div class="section-title">Comments</div>
+                <div class="comment-list">
+                    <div class="comment">
+                        <div class="comment-author">Alex M.</div>
+                        <div class="comment-text">Looks good! Let me know if you need any help with this.</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-author">Priya R.</div>
+                        <div class="comment-text">I've prepared the design mockups. Check Figma.</div>
+                    </div>
+                </div>
+                <input type="text" class="form-input" placeholder="Add a comment..." style="margin-top: .75rem;">
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                <button class="btn btn-primary" onclick="showEditTaskModal()">Edit Task</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Task Modal -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Task</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); showTaskCreatedModal();">
+                <div class="form-group">
+                    <label class="form-label">Task Title</label>
+                    <input type="text" class="form-input" placeholder="Enter task title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" rows="3" placeholder="Enter task description" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Assignee</label>
+                    <select class="form-input" required>
+                        <option value="">Select assignee</option>
+                        <option>Sarah K.</option>
+                        <option>Alex M.</option>
+                        <option>Priya R.</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <select class="form-input" required>
+                        <option value="">Select priority</option>
+                        <option>Low</option>
+                        <option>Medium</option>
+                        <option>High</option>
+                        <option>Urgent</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Due Date</label>
+                    <input type="date" class="form-input" required>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Task Modal -->
+    <div id="editTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Task</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); showTaskUpdatedModal();">
+                <div class="form-group">
+                    <label class="form-label">Task Title</label>
+                    <input type="text" class="form-input" value="Create Landing Page" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" rows="3" required>Design and develop new landing page with modern UI</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-input" required>
+                        <option>To Do</option>
+                        <option>In Progress</option>
+                        <option>Done</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Assignee</label>
+                    <select class="form-input" required>
+                        <option selected>Sarah K.</option>
+                        <option>Alex M.</option>
+                        <option>Priya R.</option>
+                    </select>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Task Created Success Modal -->
+    <div id="taskCreatedModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+            <h2 style="margin-bottom: .5rem;">Task Created!</h2>
+            <p style="color: #6b7280; margin-bottom: 2rem;">Your new task has been added to the board.</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="closeModal(); showScreen('boardScreen');">View Board</button>
+        </div>
+    </div>
+    
+    <!-- Task Updated Success Modal -->
+    <div id="taskUpdatedModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+            <h2 style="margin-bottom: .5rem;">Task Updated!</h2>
+            <p style="color: #6b7280; margin-bottom: 2rem;">Your changes have been saved successfully.</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="closeModal();">Close</button>
+        </div>
+    </div>
+    
+    <div class="watermark">Kenkai Labs - Interactive Prototype</div>
+    
+    <script>
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+        
+        function showTaskModal(title, desc, type) {
+            document.getElementById('taskModalTitle').textContent = title;
+            document.getElementById('taskModalDesc').textContent = desc;
+            
+            const statusLabels = {
+                'feature': 'Feature',
+                'bug': 'Bug',
+                'enhancement': 'Enhancement',
+                'urgent': 'Urgent'
+            };
+            
+            document.getElementById('taskModalStatus').textContent = statusLabels[type] || 'Feature';
+            document.getElementById('taskModal').classList.add('active');
+        }
+        
+        function showAddTaskModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('addTaskModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showEditTaskModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('editTaskModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showTaskCreatedModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('taskCreatedModal').classList.add('active');
+            }, 100);
+        }
+        
+        function showTaskUpdatedModal() {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('taskUpdatedModal').classList.add('active');
+            }, 100);
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+        
+        // ESC key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

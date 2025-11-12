@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Website - Interactive Wireframe by Kenkai Labs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .browser-frame {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.15);
+            overflow: hidden;
+        }
+        
+        .browser-header {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .browser-dots {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .dot-red { background: #ff5f57; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #28ca42; }
+        
+        .address-bar {
+            flex: 1;
+            background: #fff;
+            padding: 6px 16px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            margin-left: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .screen {
+            display: none;
+            min-height: 800px;
+            background: #fff;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .navbar {
+            background: #fff;
+            padding: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2563eb;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .logo:hover {
+            color: #1d4ed8;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+        
+        .nav-item {
+            font-size: 16px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: color .2s;
+            user-select: none;
+        }
+        
+        .nav-item:hover {
+            color: #2563eb;
+        }
+        
+        .nav-item.active {
+            color: #2563eb;
+            font-weight: 600;
+        }
+        
+        .nav-cta {
+            background: #2563eb;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s;
+            user-select: none;
+        }
+        
+        .nav-cta:hover {
+            background: #1d4ed8;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .hero-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .hero-title {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: .9;
+            line-height: 1.6;
+        }
+        
+        .hero-cta {
+            display: inline-block;
+            background: #fff;
+            color: #2563eb;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform .2s;
+            user-select: none;
+        }
+        
+        .hero-cta:hover {
+            transform: translateY(-2px);
+        }
+        
+        .section {
+            padding: 80px 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            font-size: 40px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 60px;
+            color: #1f2937;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.08);
+            text-align: center;
+            cursor: pointer;
+            transition: transform .2s;
+            user-select: none;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1f2937;
+        }
+        
+        .feature-desc {
+            font-size: 16px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .team-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,.08);
+            cursor: pointer;
+            transition: transform .2s;
+            user-select: none;
+        }
+        
+        .team-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .team-photo {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #fff;
+        }
+        
+        .team-info {
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .team-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+        
+        .team-role {
+            font-size: 16px;
+            color: #2563eb;
+            margin-bottom: 12px;
+        }
+        
+        .team-bio {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .blog-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,.08);
+            cursor: pointer;
+            transition: transform .2s;
+            user-select: none;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .blog-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: #fff;
+        }
+        
+        .blog-content {
+            padding: 24px;
+        }
+        
+        .blog-meta {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+        
+        .blog-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+        
+        .blog-excerpt {
+            font-size: 16px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        
+        .blog-link {
+            color: #2563eb;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .blog-link:hover {
+            text-decoration: underline;
+        }
+        
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.08);
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color .2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            min-height: 120px;
+            resize: vertical;
+            transition: border-color .2s;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        
+        .form-submit {
+            background: #2563eb;
+            color: #fff;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s;
+            user-select: none;
+        }
+        
+        .form-submit:hover {
+            background: #1d4ed8;
+        }
+        
+        .footer {
+            background: #1f2937;
+            color: #fff;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section p,
+        .footer-section a {
+            color: #d1d5db;
+            line-height: 1.6;
+            text-decoration: none;
+        }
+        
+        .footer-section a:hover {
+            color: #fff;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 30px;
+            text-align: center;
+            color: #9ca3af;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            animation: modalSlideUp .3s ease;
+        }
+        
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .modal-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+        
+        .modal-subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .modal-info {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .modal-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        
+        .modal-info-row:last-child {
+            margin-bottom: 0;
+            font-weight: 700;
+            padding-top: 12px;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 30px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s;
+            user-select: none;
+        }
+        
+        .modal-btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        
+        .modal-btn-primary:hover {
+            background: #1d4ed8;
+        }
+        
+        .modal-btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .modal-btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2563eb;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+            z-index: 999;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 36px;
+            }
+            
+            .hero-subtitle {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 32px;
+            }
+            
+            .features-grid,
+            .team-grid,
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="browser-frame">
+        <div class="browser-header">
+            <div class="browser-dots">
+                <div class="browser-dot dot-red"></div>
+                <div class="browser-dot dot-yellow"></div>
+                <div class="browser-dot dot-green"></div>
+            </div>
+            <div class="address-bar">https://corporate-site.com</div>
+        </div>
+        
+        <!-- Home Screen -->
+        <div id="homeScreen" class="screen active">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <div class="logo" onclick="showHome()">TechCorp</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item active" onclick="showHome()">Home</li>
+                        <li class="nav-item" onclick="showAbout()">About</li>
+                        <li class="nav-item" onclick="showServices()">Services</li>
+                        <li class="nav-item" onclick="showBlog()">Blog</li>
+                        <li class="nav-item" onclick="showContact()">Contact</li>
+                    </ul>
+                    <div class="nav-cta" onclick="showContactModal()">Get Started</div>
+                </div>
+            </nav>
+            
+            <section class="hero-section">
+                <div class="hero-container">
+                    <h1 class="hero-title">Innovative Solutions for Modern Business</h1>
+                    <p class="hero-subtitle">We help companies transform their digital presence with cutting-edge technology and strategic insights.</p>
+                    <div class="hero-cta" onclick="showServicesModal()">Explore Our Services</div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <div class="container">
+                    <h2 class="section-title">Why Choose TechCorp?</h2>
+                    <div class="features-grid">
+                        <div class="feature-card" onclick="showFeatureModal('innovation')">
+                            <div class="feature-icon">🚀</div>
+                            <h3 class="feature-title">Innovation First</h3>
+                            <p class="feature-desc">We leverage the latest technologies to deliver cutting-edge solutions that drive business growth.</p>
+                        </div>
+                        <div class="feature-card" onclick="showFeatureModal('expertise')">
+                            <div class="feature-icon">👥</div>
+                            <h3 class="feature-title">Expert Team</h3>
+                            <p class="feature-desc">Our experienced professionals bring decades of combined expertise to every project.</p>
+                        </div>
+                        <div class="feature-card" onclick="showFeatureModal('support')">
+                            <div class="feature-icon">🛡️</div>
+                            <h3 class="feature-title">24/7 Support</h3>
+                            <p class="feature-desc">Round-the-clock support ensures your business operations never skip a beat.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- About Screen -->
+        <div id="aboutScreen" class="screen">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <div class="logo" onclick="showHome()">TechCorp</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item" onclick="showHome()">Home</li>
+                        <li class="nav-item active" onclick="showAbout()">About</li>
+                        <li class="nav-item" onclick="showServices()">Services</li>
+                        <li class="nav-item" onclick="showBlog()">Blog</li>
+                        <li class="nav-item" onclick="showContact()">Contact</li>
+                    </ul>
+                    <div class="nav-cta" onclick="showContactModal()">Get Started</div>
+                </div>
+            </nav>
+            
+            <section class="section" style="padding-top: 40px;">
+                <div class="container">
+                    <h1 class="section-title">About TechCorp</h1>
+                    <div style="max-width: 800px; margin: 0 auto 60px; text-align: center;">
+                        <p style="font-size: 20px; color: #6b7280; line-height: 1.8;">Founded in 2015, TechCorp has been at the forefront of digital transformation, helping businesses adapt and thrive in an ever-evolving technological landscape.</p>
+                    </div>
+                    
+                    <h2 class="section-title">Our Team</h2>
+                    <div class="team-grid">
+                        <div class="team-card" onclick="showTeamModal('Sarah Johnson', 'CEO & Founder', '15+ years in tech leadership')">
+                            <div class="team-photo">SJ</div>
+                            <div class="team-info">
+                                <h3 class="team-name">Sarah Johnson</h3>
+                                <p class="team-role">CEO & Founder</p>
+                                <p class="team-bio">Visionary leader with 15+ years in tech industry, passionate about innovation.</p>
+                            </div>
+                        </div>
+                        <div class="team-card" onclick="showTeamModal('Michael Chen', 'CTO', 'Full-stack architect and AI specialist')">
+                            <div class="team-photo" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">MC</div>
+                            <div class="team-info">
+                                <h3 class="team-name">Michael Chen</h3>
+                                <p class="team-role">CTO</p>
+                                <p class="team-bio">Full-stack architect with expertise in AI and machine learning solutions.</p>
+                            </div>
+                        </div>
+                        <div class="team-card" onclick="showTeamModal('Emily Rodriguez', 'Head of Design', 'UX/UI expert with design thinking approach')">
+                            <div class="team-photo" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">ER</div>
+                            <div class="team-info">
+                                <h3 class="team-name">Emily Rodriguez</h3>
+                                <p class="team-role">Head of Design</p>
+                                <p class="team-bio">UX/UI expert passionate about creating intuitive user experiences.</p>
+                            </div>
+                        </div>
+                        <div class="team-card" onclick="showTeamModal('David Kim', 'Lead Developer', 'Senior engineer with cloud architecture expertise')">
+                            <div class="team-photo" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">DK</div>
+                            <div class="team-info">
+                                <h3 class="team-name">David Kim</h3>
+                                <p class="team-role">Lead Developer</p>
+                                <p class="team-bio">Senior engineer specializing in scalable cloud architectures.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Services Screen -->
+        <div id="servicesScreen" class="screen">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <div class="logo" onclick="showHome()">TechCorp</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item" onclick="showHome()">Home</li>
+                        <li class="nav-item" onclick="showAbout()">About</li>
+                        <li class="nav-item active" onclick="showServices()">Services</li>
+                        <li class="nav-item" onclick="showBlog()">Blog</li>
+                        <li class="nav-item" onclick="showContact()">Contact</li>
+                    </ul>
+                    <div class="nav-cta" onclick="showContactModal()">Get Started</div>
+                </div>
+            </nav>
+            
+            <section class="section" style="padding-top: 40px;">
+                <div class="container">
+                    <h1 class="section-title">Our Services</h1>
+                    <div class="features-grid">
+                        <div class="feature-card" onclick="showServiceModal('Web Development', 'Custom websites and web applications built with modern frameworks like React, Next.js, and Node.js.')">
+                            <div class="feature-icon">💻</div>
+                            <h3 class="feature-title">Web Development</h3>
+                            <p class="feature-desc">Custom websites and web applications built with modern frameworks and best practices.</p>
+                        </div>
+                        <div class="feature-card" onclick="showServiceModal('Mobile Apps', 'Native and cross-platform mobile applications for iOS and Android using React Native and Flutter.')">
+                            <div class="feature-icon">📱</div>
+                            <h3 class="feature-title">Mobile Apps</h3>
+                            <p class="feature-desc">Native and cross-platform mobile applications for iOS and Android platforms.</p>
+                        </div>
+                        <div class="feature-card" onclick="showServiceModal('Cloud Solutions', 'Scalable cloud infrastructure on AWS, Azure, and Google Cloud with DevOps automation.')">
+                            <div class="feature-icon">☁️</div>
+                            <h3 class="feature-title">Cloud Solutions</h3>
+                            <p class="feature-desc">Scalable cloud infrastructure and migration services for modern businesses.</p>
+                        </div>
+                        <div class="feature-card" onclick="showServiceModal('CMS Integration', 'Content management systems with headless CMS, WordPress, and custom admin panels.')">
+                            <div class="feature-icon">📝</div>
+                            <h3 class="feature-title">CMS Integration</h3>
+                            <p class="feature-desc">Content management systems that make updating your website simple and efficient.</p>
+                        </div>
+                        <div class="feature-card" onclick="showServiceModal('SEO Optimization', 'Technical SEO, performance optimization, and search engine ranking improvements.')">
+                            <div class="feature-icon">🔍</div>
+                            <h3 class="feature-title">SEO Optimization</h3>
+                            <p class="feature-desc">Search engine optimization to improve your online visibility and rankings.</p>
+                        </div>
+                        <div class="feature-card" onclick="showServiceModal('Analytics & Insights', 'Data analytics, user behavior tracking, and business intelligence dashboards.')">
+                            <div class="feature-icon">📊</div>
+                            <h3 class="feature-title">Analytics & Insights</h3>
+                            <p class="feature-desc">Data analytics and insights to help you make informed business decisions.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Blog Screen -->
+        <div id="blogScreen" class="screen">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <div class="logo" onclick="showHome()">TechCorp</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item" onclick="showHome()">Home</li>
+                        <li class="nav-item" onclick="showAbout()">About</li>
+                        <li class="nav-item" onclick="showServices()">Services</li>
+                        <li class="nav-item active" onclick="showBlog()">Blog</li>
+                        <li class="nav-item" onclick="showContact()">Contact</li>
+                    </ul>
+                    <div class="nav-cta" onclick="showContactModal()">Get Started</div>
+                </div>
+            </nav>
+            
+            <section class="section" style="padding-top: 40px;">
+                <div class="container">
+                    <h1 class="section-title">Latest Insights</h1>
+                    <div class="blog-grid">
+                        <div class="blog-card" onclick="showBlogModal('The Future of Web Development', 'Exploring emerging trends in web technology and what they mean for businesses in 2024.')">
+                            <div class="blog-image">📱</div>
+                            <div class="blog-content">
+                                <div class="blog-meta">Tech Trends • March 15, 2024</div>
+                                <h3 class="blog-title">The Future of Web Development</h3>
+                                <p class="blog-excerpt">Exploring emerging trends in web technology and what they mean for businesses looking to stay competitive.</p>
+                                <span class="blog-link">Read more →</span>
+                            </div>
+                        </div>
+                        <div class="blog-card" onclick="showBlogModal('Cloud Migration Best Practices', 'A comprehensive guide to successfully migrating your business infrastructure to the cloud.')">
+                            <div class="blog-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">☁️</div>
+                            <div class="blog-content">
+                                <div class="blog-meta">Cloud Computing • March 10, 2024</div>
+                                <h3 class="blog-title">Cloud Migration Best Practices</h3>
+                                <p class="blog-excerpt">A comprehensive guide to successfully migrating your business infrastructure to the cloud.</p>
+                                <span class="blog-link">Read more →</span>
+                            </div>
+                        </div>
+                        <div class="blog-card" onclick="showBlogModal('SEO in 2024: What Changed?', 'Latest updates to search engine algorithms and how to optimize your content strategy.')">
+                            <div class="blog-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">🔍</div>
+                            <div class="blog-content">
+                                <div class="blog-meta">Digital Marketing • March 5, 2024</div>
+                                <h3 class="blog-title">SEO in 2024: What Changed?</h3>
+                                <p class="blog-excerpt">Latest updates to search engine algorithms and how to optimize your content strategy accordingly.</p>
+                                <span class="blog-link">Read more →</span>
+                            </div>
+                        </div>
+                        <div class="blog-card" onclick="showBlogModal('Building Scalable Mobile Apps', 'Key considerations for developing mobile applications that can grow with your business.')">
+                            <div class="blog-image" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">📱</div>
+                            <div class="blog-content">
+                                <div class="blog-meta">Mobile Development • February 28, 2024</div>
+                                <h3 class="blog-title">Building Scalable Mobile Apps</h3>
+                                <p class="blog-excerpt">Key considerations for developing mobile applications that can grow with your business needs.</p>
+                                <span class="blog-link">Read more →</span>
+                            </div>
+                        </div>
+                        <div class="blog-card" onclick="showBlogModal('UX Design Principles for 2024', 'Modern user experience design principles that create engaging digital products.')">
+                            <div class="blog-image" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">🎨</div>
+                            <div class="blog-content">
+                                <div class="blog-meta">Design • February 20, 2024</div>
+                                <h3 class="blog-title">UX Design Principles for 2024</h3>
+                                <p class="blog-excerpt">Modern user experience design principles that create engaging and intuitive digital products.</p>
+                                <span class="blog-link">Read more →</span>
+                            </div>
+                        </div>
+                        <div class="blog-card" onclick="showBlogModal('Data Security Best Practices', 'Essential security measures every business should implement to protect customer data.')">
+                            <div class="blog-image" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">🔒</div>
+                            <div class="blog-content">
+                                <div class="blog-meta">Security • February 15, 2024</div>
+                                <h3 class="blog-title">Data Security Best Practices</h3>
+                                <p class="blog-excerpt">Essential security measures every business should implement to protect sensitive customer data.</p>
+                                <span class="blog-link">Read more →</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Contact Screen -->
+        <div id="contactScreen" class="screen">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <div class="logo" onclick="showHome()">TechCorp</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item" onclick="showHome()">Home</li>
+                        <li class="nav-item" onclick="showAbout()">About</li>
+                        <li class="nav-item" onclick="showServices()">Services</li>
+                        <li class="nav-item" onclick="showBlog()">Blog</li>
+                        <li class="nav-item active" onclick="showContact()">Contact</li>
+                    </ul>
+                    <div class="nav-cta" onclick="showContactModal()">Get Started</div>
+                </div>
+            </nav>
+            
+            <section class="section" style="padding-top: 40px;">
+                <div class="container">
+                    <h1 class="section-title">Get In Touch</h1>
+                    <div style="max-width: 600px; margin: 0 auto 40px; text-align: center;">
+                        <p style="font-size: 18px; color: #6b7280; line-height: 1.8;">Ready to transform your business? Let's discuss how we can help you achieve your goals.</p>
+                    </div>
+                    
+                    <form class="contact-form" onsubmit="handleContactSubmit(event)">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" placeholder="Enter your email address" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Company</label>
+                            <input type="text" class="form-input" placeholder="Enter your company name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-textarea" placeholder="Tell us about your project or requirements" required></textarea>
+                        </div>
+                        <button type="submit" class="form-submit">Send Message</button>
+                    </form>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 60px;">
+                        <div style="text-align: center; padding: 30px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">📍</div>
+                            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px;">Office Location</h3>
+                            <p style="color: #6b7280;">123 Tech Street<br>Silicon Valley, CA 94000</p>
+                        </div>
+                        <div style="text-align: center; padding: 30px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">📞</div>
+                            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px;">Phone</h3>
+                            <p style="color: #6b7280;">+1 (555) 123-4567</p>
+                        </div>
+                        <div style="text-align: center; padding: 30px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">✉️</div>
+                            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px;">Email</h3>
+                            <p style="color: #6b7280;">hello@techcorp.com</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <footer class="footer">
+                <div class="container">
+                    <div class="footer-content">
+                        <div class="footer-section">
+                            <h3>TechCorp</h3>
+                            <p>Innovative solutions for modern business challenges. We help companies thrive in the digital age.</p>
+                        </div>
+                        <div class="footer-section">
+                            <h3>Services</h3>
+                            <ul class="footer-links">
+                                <li><a onclick="showServices()">Web Development</a></li>
+                                <li><a onclick="showServices()">Mobile Apps</a></li>
+                                <li><a onclick="showServices()">Cloud Solutions</a></li>
+                                <li><a onclick="showServices()">CMS Integration</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-section">
+                            <h3>Company</h3>
+                            <ul class="footer-links">
+                                <li><a onclick="showAbout()">About Us</a></li>
+                                <li><a onclick="showBlog()">Blog</a></li>
+                                <li><a onclick="showContact()">Contact</a></li>
+                                <li><a onclick="showPrivacyModal()">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-section">
+                            <h3>Connect</h3>
+                            <ul class="footer-links">
+                                <li><a onclick="showSocialModal('LinkedIn')">LinkedIn</a></li>
+                                <li><a onclick="showSocialModal('Twitter')">Twitter</a></li>
+                                <li><a onclick="showSocialModal('GitHub')">GitHub</a></li>
+                                <li><a onclick="showNewsletterModal()">Newsletter</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="footer-bottom">
+                        <p>&copy; 2024 TechCorp. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    
+    <!-- Feature Modal -->
+    <div id="featureModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon" id="featureIcon">🚀</div>
+                <div class="modal-title" id="featureTitle">Innovation First</div>
+                <div class="modal-subtitle" id="featureDesc">Detailed information about our innovative approach</div>
+            </div>
+            <div class="modal-info">
+                <div class="modal-info-row">
+                    <span>Focus Area:</span>
+                    <span id="featureFocus">Technology Innovation</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Impact:</span>
+                    <span>High Business Value</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Implementation:</span>
+                    <span>2-4 weeks</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Success Rate:</span>
+                    <span>98% Client Satisfaction</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button>
+                <button class="modal-btn modal-btn-primary" onclick="closeModal(); showContactModal();">Get Started</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Team Modal -->
+    <div id="teamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">👤</div>
+                <div class="modal-title" id="teamName">Team Member</div>
+                <div class="modal-subtitle" id="teamRole">Role & Experience</div>
+            </div>
+            <div style="text-align: center; padding: 20px 0;">
+                <p id="teamBio" style="font-size: 16px; color: #6b7280; line-height: 1.6; margin-bottom: 20px;">Detailed bio and experience</p>
+                <div style="background: #f9fafb; padding: 20px; border-radius: 12px;">
+                    <h4 style="margin-bottom: 12px; color: #374151;">Expertise Areas</h4>
+                    <div id="teamExpertise" style="font-size: 14px; color: #6b7280;">Professional expertise and skills</div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button>
+                <button class="modal-btn modal-btn-primary" onclick="showContactModal()">Connect</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Service Modal -->
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon" id="serviceIcon">💻</div>
+                <div class="modal-title" id="serviceTitle">Web Development</div>
+                <div class="modal-subtitle" id="serviceDesc">Service description and benefits</div>
+            </div>
+            <div class="modal-info">
+                <div class="modal-info-row">
+                    <span>Technologies:</span>
+                    <span id="serviceTech">React, Next.js, Node.js</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Timeline:</span>
+                    <span>4-8 weeks</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Starting Price:</span>
+                    <span>$5,000</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Includes:</span>
+                    <span>Design, Development, Testing</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button>
+                <button class="modal-btn modal-btn-primary" onclick="showQuoteModal()">Get Quote</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Blog Modal -->
+    <div id="blogModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">📖</div>
+                <div class="modal-title" id="blogTitle">Blog Post</div>
+                <div class="modal-subtitle" id="blogSummary">Article summary and insights</div>
+            </div>
+            <div style="text-align: left; padding: 20px 0;">
+                <div style="background: #f9fafb; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 12px;">Key Takeaways:</h4>
+                    <ul style="margin-left: 20px; color: #6b7280;">
+                        <li>Latest industry trends and insights</li>
+                        <li>Practical implementation strategies</li>
+                        <li>Real-world case studies and examples</li>
+                        <li>Expert recommendations and best practices</li>
+                    </ul>
+                </div>
+                <p style="color: #6b7280; line-height: 1.6;">This comprehensive article provides actionable insights and practical guidance for modern businesses looking to stay competitive in today's digital landscape.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button>
+                <button class="modal-btn modal-btn-primary" onclick="showNewsletterModal()">Subscribe for More</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">🚀</div>
+                <div class="modal-title">Let's Get Started!</div>
+                <div class="modal-subtitle">Choose how you'd like to begin your project</div>
+            </div>
+            <div style="display: grid; gap: 16px; margin: 20px 0;">
+                <button onclick="showContact()" style="padding: 16px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📝 Fill Contact Form</button>
+                <button onclick="showScheduleModal()" style="padding: 16px; background: #10b981; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📅 Schedule Free Consultation</button>
+                <button onclick="showQuoteModal()" style="padding: 16px; background: #f59e0b; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">💰 Request Project Quote</button>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">✅</div>
+                <div class="modal-title" id="successTitle">Success!</div>
+                <div class="modal-subtitle" id="successSubtitle">Action completed successfully</div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-primary" onclick="closeModal()" style="width: 100%;">Continue</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="watermark">Kenkai Labs - Interactive Prototype</div>
+    
+    <script>
+        function showHome() {
+            hideAllScreens();
+            document.getElementById('homeScreen').classList.add('active');
+            updateActiveNav('Home');
+        }
+        
+        function showAbout() {
+            hideAllScreens();
+            document.getElementById('aboutScreen').classList.add('active');
+            updateActiveNav('About');
+        }
+        
+        function showServices() {
+            hideAllScreens();
+            document.getElementById('servicesScreen').classList.add('active');
+            updateActiveNav('Services');
+        }
+        
+        function showBlog() {
+            hideAllScreens();
+            document.getElementById('blogScreen').classList.add('active');
+            updateActiveNav('Blog');
+        }
+        
+        function showContact() {
+            hideAllScreens();
+            document.getElementById('contactScreen').classList.add('active');
+            updateActiveNav('Contact');
+            closeModal();
+        }
+        
+        function hideAllScreens() {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+        }
+        
+        function updateActiveNav(page) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent === page) {
+                    item.classList.add('active');
+                }
+            });
+        }
+        
+        function showFeatureModal(type) {
+            const features = {
+                innovation: {
+                    icon: '🚀',
+                    title: 'Innovation First',
+                    desc: 'We leverage cutting-edge technologies and methodologies to deliver solutions that give you a competitive advantage.',
+                    focus: 'Emerging Technologies'
+                },
+                expertise: {
+                    icon: '👥',
+                    title: 'Expert Team',
+                    desc: 'Our multidisciplinary team brings together decades of experience in technology, design, and business strategy.',
+                    focus: 'Cross-functional Expertise'
+                },
+                support: {
+                    icon: '🛡️',
+                    title: '24/7 Support',
+                    desc: 'Round-the-clock monitoring and support ensures your systems stay online and performing optimally.',
+                    focus: 'Continuous Monitoring'
+                }
+            };
+            
+            const feature = features[type];
+            document.getElementById('featureIcon').textContent = feature.icon;
+            document.getElementById('featureTitle').textContent = feature.title;
+            document.getElementById('featureDesc').textContent = feature.desc;
+            document.getElementById('featureFocus').textContent = feature.focus;
+            document.getElementById('featureModal').classList.add('active');
+        }
+        
+        function showTeamModal(name, role, bio) {
+            const expertise = {
+                'Sarah Johnson': 'Strategic Planning • Team Leadership • Product Vision • Stakeholder Management',
+                'Michael Chen': 'Full-Stack Development • AI/ML • Cloud Architecture • DevOps • System Design',
+                'Emily Rodriguez': 'User Experience Design • Design Systems • Prototyping • User Research • Visual Design',
+                'David Kim': 'Backend Engineering • Database Design • API Development • Performance Optimization • Security'
+            };
+            
+            document.getElementById('teamName').textContent = name;
+            document.getElementById('teamRole').textContent = role;
+            document.getElementById('teamBio').textContent = bio;
+            document.getElementById('teamExpertise').textContent = expertise[name] || 'Technology expertise and leadership';
+            document.getElementById('teamModal').classList.add('active');
+        }
+        
+        function showServiceModal(title, description) {
+            const services = {
+                'Web Development': { icon: '💻', tech: 'React, Next.js, Node.js, TypeScript' },
+                'Mobile Apps': { icon: '📱', tech: 'React Native, Flutter, Swift, Kotlin' },
+                'Cloud Solutions': { icon: '☁️', tech: 'AWS, Azure, Google Cloud, Docker' },
+                'CMS Integration': { icon: '📝', tech: 'Contentful, Strapi, WordPress, Sanity' },
+                'SEO Optimization': { icon: '🔍', tech: 'Technical SEO, Analytics, Performance' },
+                'Analytics & Insights': { icon: '📊', tech: 'Google Analytics, Mixpanel, Custom' }
+            };
+            
+            const service = services[title];
+            document.getElementById('serviceIcon').textContent = service?.icon || '⚙️';
+            document.getElementById('serviceTitle').textContent = title;
+            document.getElementById('serviceDesc').textContent = description;
+            document.getElementById('serviceTech').textContent = service?.tech || 'Modern tech stack';
+            document.getElementById('serviceModal').classList.add('active');
+        }
+        
+        function showBlogModal(title, summary) {
+            document.getElementById('blogTitle').textContent = title;
+            document.getElementById('blogSummary').textContent = summary;
+            document.getElementById('blogModal').classList.add('active');
+        }
+        
+        function showContactModal() {
+            document.getElementById('contactModal').classList.add('active');
+        }
+        
+        function showServicesModal() {
+            closeModal();
+            setTimeout(() => {
+                showServices();
+            }, 300);
+        }
+        
+        function showScheduleModal() {
+            closeModal();
+            setTimeout(() => {
+                showSuccessModal('Consultation Scheduled', 'We\'ll send you a calendar link within 24 hours to book your free consultation call.');
+            }, 300);
+        }
+        
+        function showQuoteModal() {
+            closeModal();
+            setTimeout(() => {
+                showSuccessModal('Quote Request Sent', 'Our team will review your requirements and send a detailed quote within 48 hours.');
+            }, 300);
+        }
+        
+        function showNewsletterModal() {
+            closeModal();
+            setTimeout(() => {
+                showSuccessModal('Subscribed!', 'You\'ll receive our latest insights and updates directly in your inbox.');
+            }, 300);
+        }
+        
+        function showPrivacyModal() {
+            showSuccessModal('Privacy Policy', 'Your data is secure and never shared with third parties. We comply with GDPR and other privacy regulations.');
+        }
+        
+        function showSocialModal(platform) {
+            showSuccessModal(`${platform} Link`, `Opening our ${platform} profile in a new tab...`);
+        }
+        
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            showSuccessModal('Message Sent!', 'Thank you for reaching out. Our team will respond within 24 hours.');
+        }
+        
+        function showSuccessModal(title, subtitle) {
+            document.getElementById('successTitle').textContent = title;
+            document.getElementById('successSubtitle').textContent = subtitle;
+            document.getElementById('successModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+        
+        // ESC key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

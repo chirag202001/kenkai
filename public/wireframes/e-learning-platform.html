@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Learning Platform - Interactive Wireframe by Kenkai Labs</title>
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#f5f7fb; }
+    .app-frame { max-width: 1280px; margin: 20px auto; background:#fff; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.15); overflow:hidden; }
+    .top-bar { display:flex; align-items:center; padding:14px 24px; border-bottom:1px solid #e5e7eb; background:#ffffff; position:sticky; top:0; z-index:100; }
+    .logo { font-size:24px; font-weight:700; color:#2563eb; cursor:pointer; user-select:none; }
+    nav { margin-left:40px; display:flex; gap:32px; }
+    .nav-link { font-weight:500; color:#374151; cursor:pointer; position:relative; padding:6px 4px; }
+    .nav-link.active { color:#2563eb; }
+    .nav-link.active:after { content:""; position:absolute; left:0; bottom:-6px; width:100%; height:3px; background:#2563eb; border-radius:3px; }
+    .primary-btn { background:#2563eb; color:#fff; padding:10px 20px; border:none; border-radius:8px; font-weight:600; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.1); }
+    .primary-btn:hover { background:#1d4ed8; }
+    .secondary-btn { background:#f3f4f6; color:#374151; padding:10px 20px; border:none; border-radius:8px; font-weight:600; cursor:pointer; }
+    .secondary-btn:hover { background:#e5e7eb; }
+    .screen { display:none; min-height:800px; }
+    .screen.active { display:block; }
+    .hero { padding:90px 40px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#fff; text-align:center; }
+    .hero h1 { font-size:56px; line-height:1.05; margin-bottom:20px; }
+    .hero p { font-size:20px; max-width:860px; margin:0 auto 36px; opacity:.95; line-height:1.6; }
+    .hero-actions { display:flex; justify-content:center; gap:18px; flex-wrap:wrap; }
+    .catalog { padding:60px 40px; }
+    .section-title { font-size:42px; font-weight:700; text-align:center; margin-bottom:50px; color:#1f2937; }
+    .course-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:34px; }
+    .course-card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:box-shadow .2s,transform .2s; }
+    .course-card:hover { box-shadow:0 12px 30px rgba(0,0,0,.12); transform:translateY(-4px); }
+    .course-thumb { height:160px; background:linear-gradient(135deg,#fa709a 0%,#fee140 100%); display:flex; align-items:center; justify-content:center; font-size:48px; color:#fff; }
+    .course-content { padding:22px; flex:1; display:flex; flex-direction:column; }
+    .course-title { font-size:20px; font-weight:700; margin-bottom:8px; color:#111827; }
+    .course-meta { font-size:13px; color:#6b7280; margin-bottom:12px; }
+    .course-desc { font-size:14px; color:#4b5563; line-height:1.4; flex:1; }
+    .course-footer { margin-top:16px; display:flex; justify-content:space-between; align-items:center; }
+    .badge { background:#2563eb; color:#fff; font-size:12px; padding:4px 10px; border-radius:6px; font-weight:600; }
+    .outline-btn { background:#fff; border:1px solid #2563eb; color:#2563eb; padding:8px 14px; font-size:13px; font-weight:600; border-radius:8px; cursor:pointer; }
+    .outline-btn:hover { background:#2563eb; color:#fff; }
+    .detail-header { padding:40px 40px 20px; background:#ffffff; border-bottom:1px solid #e5e7eb; }
+    .detail-title { font-size:42px; font-weight:700; margin-bottom:12px; }
+    .detail-sub { font-size:18px; color:#6b7280; line-height:1.5; max-width:900px; }
+    .detail-body { display:grid; grid-template-columns:2fr 1fr; gap:40px; padding:40px; }
+    .module-card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:18px 20px; margin-bottom:16px; cursor:pointer; transition:background .15s; }
+    .module-card:hover { background:#f8fafc; }
+    .module-title { font-weight:600; margin-bottom:6px; }
+    .module-meta { font-size:12px; color:#6b7280; }
+    .sidebar-box { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:24px 26px; margin-bottom:20px; }
+    .sidebar-title { font-size:16px; font-weight:700; margin-bottom:14px; color:#111827; }
+    .progress-bar { background:#e5e7eb; height:10px; border-radius:6px; overflow:hidden; margin:10px 0 16px; }
+    .progress-fill { height:10px; background:linear-gradient(90deg,#2563eb,#3b82f6); width:45%; border-radius:6px; }
+    .enroll-btn { width:100%; padding:14px 20px; border:none; background:#10b981; color:#fff; font-weight:700; border-radius:10px; cursor:pointer; margin-top:10px; }
+    .enroll-btn:hover { background:#059669; }
+    .video-player { background:#111827; color:#fff; height:520px; display:flex; flex-direction:column; justify-content:center; align-items:center; border-radius:16px; position:relative; overflow:hidden; }
+    .video-timeline { position:absolute; bottom:0; left:0; right:0; height:8px; background:#374151; }
+    .video-progress { height:100%; background:#2563eb; width:30%; }
+    .video-controls { position:absolute; bottom:24px; display:flex; gap:14px; background:rgba(0,0,0,.4); padding:10px 16px; border-radius:12px; }
+    .vc-btn { background:#1f2937; color:#fff; border:none; padding:8px 14px; font-size:14px; font-weight:600; border-radius:8px; cursor:pointer; }
+    .vc-btn:hover { background:#374151; }
+    .dashboard { padding:50px 40px; }
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:26px; margin-bottom:50px; }
+    .stat-card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:20px 22px; cursor:pointer; transition:transform .2s,box-shadow .2s; }
+    .stat-card:hover { transform:translateY(-4px); box-shadow:0 10px 25px rgba(0,0,0,.12); }
+    .stat-label { font-size:13px; font-weight:600; color:#6b7280; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px; }
+    .stat-value { font-size:30px; font-weight:700; color:#2563eb; }
+    .cert-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:30px; }
+    .cert-card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:20px 22px; cursor:pointer; position:relative; transition:box-shadow .2s; }
+    .cert-card:hover { box-shadow:0 10px 25px rgba(0,0,0,.12); }
+    .seal { position:absolute; top:-18px; right:-18px; width:68px; height:68px; background:linear-gradient(135deg,#10b981,#059669); color:#fff; font-weight:700; font-size:12px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,.25); }
+    .profile { padding:60px 40px; }
+    .profile-header { display:flex; gap:40px; align-items:center; margin-bottom:50px; }
+    .avatar { width:140px; height:140px; background:linear-gradient(135deg,#667eea,#764ba2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:56px; color:#fff; font-weight:700; }
+    .profile-info h2 { font-size:38px; margin-bottom:10px; }
+    .profile-bio { font-size:16px; color:#6b7280; line-height:1.5; max-width:600px; }
+    .pref-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:30px; }
+    .pref-card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:20px 22px; }
+    .pref-title { font-size:18px; font-weight:700; margin-bottom:12px; }
+    .toggle { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; font-size:14px; }
+    .switch { width:44px; height:24px; background:#e5e7eb; border-radius:24px; position:relative; cursor:pointer; transition:background .2s; }
+    .switch:after { content:""; position:absolute; left:3px; top:3px; width:18px; height:18px; background:#fff; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,.15); transition:transform .25s; }
+    .switch.active { background:#2563eb; }
+    .switch.active:after { transform:translateX(20px); }
+    footer { background:#1f2937; color:#fff; padding:50px 40px; margin-top:60px; }
+    footer .cols { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:40px; margin-bottom:40px; }
+    footer h4 { font-size:18px; margin-bottom:16px; }
+    footer a { display:block; color:#d1d5db; margin-bottom:10px; font-size:14px; text-decoration:none; cursor:pointer; }
+    footer a:hover { color:#fff; }
+    footer .bottom { text-align:center; font-size:13px; color:#9ca3af; border-top:1px solid #374151; padding-top:30px; }
+    .modal { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:1000; }
+    .modal.active { display:flex; }
+    .modal-box { background:#fff; border-radius:20px; width:520px; max-width:92%; padding:34px 38px; animation:pop .35s ease; }
+    @keyframes pop { from { opacity:0; transform:translateY(40px) scale(.95); } to { opacity:1; transform:translateY(0) scale(1); } }
+    .modal-header { text-align:center; margin-bottom:24px; }
+    .modal-icon { font-size:58px; margin-bottom:14px; }
+    .modal-title { font-size:26px; font-weight:700; margin-bottom:10px; }
+    .modal-sub { font-size:15px; color:#6b7280; line-height:1.5; }
+    .info-block { background:#f3f4f6; padding:18px 20px; border-radius:12px; margin:18px 0; font-size:14px; color:#4b5563; }
+    .modal-actions { display:flex; gap:14px; margin-top:26px; }
+    .fill-btn { flex:1; background:#2563eb; color:#fff; padding:14px 18px; border:none; border-radius:10px; font-weight:600; cursor:pointer; }
+    .fill-btn:hover { background:#1d4ed8; }
+    .ghost-btn { flex:1; background:#f3f4f6; color:#374151; border:none; padding:14px 18px; border-radius:10px; font-weight:600; cursor:pointer; }
+    .ghost-btn:hover { background:#e5e7eb; }
+    .quiz-option { background:#fff; border:2px solid #e5e7eb; padding:14px 16px; border-radius:12px; margin-bottom:12px; cursor:pointer; font-size:14px; font-weight:500; transition:border-color .2s, background .2s; }
+    .quiz-option:hover { border-color:#2563eb; background:#f0f7ff; }
+    .quiz-option.correct { border-color:#10b981; background:#ecfdf5; }
+    .quiz-option.incorrect { border-color:#ef4444; background:#fef2f2; }
+    .watermark { position:fixed; bottom:20px; right:20px; background:#2563eb; color:#fff; padding:12px 20px; border-radius:8px; font-weight:700; font-size:14px; box-shadow:0 4px 12px rgba(0,0,0,.25); z-index:1200; }
+    @media (max-width:980px){ .detail-body{ grid-template-columns:1fr; } .hero h1{ font-size:40px;} }
+  </style>
+</head>
+<body>
+  <div class="app-frame">
+    <div class="top-bar">
+      <div class="logo" onclick="showHome()">LearnX</div>
+      <nav>
+        <div class="nav-link active" onclick="showHome()">Home</div>
+        <div class="nav-link" onclick="showCatalog()">Catalog</div>
+        <div class="nav-link" onclick="showDashboard()">Dashboard</div>
+        <div class="nav-link" onclick="showCertificates()">Certificates</div>
+        <div class="nav-link" onclick="showProfile()">Profile</div>
+      </nav>
+      <div style="margin-left:auto; display:flex; gap:12px;">
+        <button class="secondary-btn" onclick="showSearchModal()">Search</button>
+        <button class="primary-btn" onclick="showLoginModal()">Login</button>
+      </div>
+    </div>
+
+    <!-- HOME -->
+    <div id="homeScreen" class="screen active">
+      <div class="hero">
+        <h1>Master Modern Skills – Learn Faster & Smarter</h1>
+        <p>Interactive courses, real-world projects, and personalized progress tracking – everything you need to upskill with confidence.</p>
+        <div class="hero-actions">
+          <button class="primary-btn" onclick="showCatalog()">Browse Courses</button>
+          <button class="secondary-btn" onclick="showHomeIntroModal()">How It Works</button>
+          <button class="secondary-btn" onclick="showLoginModal()">Get Started →</button>
+        </div>
+      </div>
+      <div class="catalog">
+        <h2 class="section-title">Popular Courses</h2>
+        <div class="course-grid">
+          <div class="course-card" onclick="openCourse('Full-Stack Web Development')">
+            <div class="course-thumb">💻</div>
+            <div class="course-content">
+              <div class="course-title">Full-Stack Web Development</div>
+              <div class="course-meta">12 modules • 36 hours • Intermediate</div>
+              <div class="course-desc">Learn React, Next.js, Node.js, databases, and deployment through hands-on projects.</div>
+              <div class="course-footer">
+                <span class="badge">Trending</span>
+                <button class="outline-btn" onclick="event.stopPropagation(); enrollCourse('Full-Stack Web Development')">Enroll</button>
+              </div>
+            </div>
+          </div>
+          <div class="course-card" onclick="openCourse('Data Analytics Fundamentals')">
+            <div class="course-thumb" style="background:linear-gradient(135deg,#667eea,#764ba2);">📊</div>
+            <div class="course-content">
+              <div class="course-title">Data Analytics Fundamentals</div>
+              <div class="course-meta">10 modules • 28 hours • Beginner</div>
+              <div class="course-desc">Understand data cleaning, visualization, SQL queries, and reporting dashboards.</div>
+              <div class="course-footer">
+                <span class="badge" style="background:#10b981;">New</span>
+                <button class="outline-btn" onclick="event.stopPropagation(); enrollCourse('Data Analytics Fundamentals')">Enroll</button>
+              </div>
+            </div>
+          </div>
+          <div class="course-card" onclick="openCourse('Advanced React Patterns')">
+            <div class="course-thumb" style="background:linear-gradient(135deg,#fa709a,#fee140);">⚛️</div>
+            <div class="course-content">
+              <div class="course-title">Advanced React Patterns</div>
+              <div class="course-meta">8 modules • 18 hours • Advanced</div>
+              <div class="course-desc">Optimize React apps with hooks, context, performance tuning, and architecture.</div>
+              <div class="course-footer">
+                <span class="badge" style="background:#f59e0b;">Pro</span>
+                <button class="outline-btn" onclick="event.stopPropagation(); enrollCourse('Advanced React Patterns')">Enroll</button>
+              </div>
+            </div>
+          </div>
+          <div class="course-card" onclick="openCourse('AI Prompt Engineering')">
+            <div class="course-thumb" style="background:linear-gradient(135deg,#10b981,#059669);">🤖</div>
+            <div class="course-content">
+              <div class="course-title">AI Prompt Engineering</div>
+              <div class="course-meta">6 modules • 12 hours • Intermediate</div>
+              <div class="course-desc">Design effective prompts for LLMs and integrate AI into workflows.</div>
+              <div class="course-footer">
+                <span class="badge" style="background:#ef4444;">Hot</span>
+                <button class="outline-btn" onclick="event.stopPropagation(); enrollCourse('AI Prompt Engineering')">Enroll</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATALOG -->
+    <div id="catalogScreen" class="screen">
+      <div class="catalog" style="padding-top:40px;">
+        <h2 class="section-title">Browse All Courses</h2>
+        <div style="max-width:680px; margin:0 auto 40px; display:flex; gap:12px;">
+          <input id="searchInput" placeholder="Search courses..." style="flex:1; padding:14px 18px; border:2px solid #e5e7eb; border-radius:12px; font-size:15px;" oninput="filterCourses()" />
+          <button class="secondary-btn" onclick="resetFilter()">Reset</button>
+        </div>
+        <div id="catalogCourses" class="course-grid"></div>
+      </div>
+    </div>
+
+    <!-- COURSE DETAIL -->
+    <div id="courseDetailScreen" class="screen">
+      <div class="detail-header">
+        <div class="detail-title" id="courseTitle">Course Title</div>
+        <div class="detail-sub" id="courseSubtitle">In-depth description of the course, covering learning objectives and outcomes.</div>
+      </div>
+      <div class="detail-body">
+        <div>
+          <div id="modulesContainer"></div>
+        </div>
+        <div>
+          <div class="sidebar-box">
+            <div class="sidebar-title">Progress</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div style="font-size:13px; color:#6b7280;">Completed <span id="completedCount">0</span> of <span id="totalCount">0</span> modules</div>
+            <button class="enroll-btn" onclick="enrollActiveCourse()" id="enrollBtn">Enroll Now</button>
+            <button class="enroll-btn" style="background:#2563eb; display:none;" id="startLearningBtn" onclick="startFirstModule()">Start Learning →</button>
+          </div>
+          <div class="sidebar-box">
+            <div class="sidebar-title">Includes</div>
+            <ul style="font-size:13px; color:#4b5563; line-height:1.6; list-style:disc; margin-left:18px;">
+              <li>Interactive lessons</li>
+              <li>Downloadable resources</li>
+              <li>Project assignments</li>
+              <li>Completion certificate</li>
+              <li>Community Q&A</li>
+            </ul>
+          </div>
+          <div class="sidebar-box">
+            <div class="sidebar-title">Actions</div>
+            <button class="secondary-btn" style="width:100%; margin-bottom:10px;" onclick="showShareModal()">Share Course</button>
+            <button class="secondary-btn" style="width:100%; margin-bottom:10px;" onclick="showBookmarkModal()">Bookmark</button>
+            <button class="secondary-btn" style="width:100%;" onclick="showReportModal()">Report Issue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEO PLAYER / MODULE -->
+    <div id="modulePlayerScreen" class="screen">
+      <div style="padding:40px;">
+        <div style="display:flex; gap:40px; flex-wrap:wrap;">
+          <div style="flex:1 1 640px; min-width:420px;">
+            <div class="video-player">
+              <div style="font-size:90px;">▶️</div>
+              <div style="margin-top:20px; font-size:18px; font-weight:600;" id="modulePlayerTitle">Module Title</div>
+              <div style="position:absolute; top:24px; left:24px; background:#2563eb; padding:6px 14px; font-size:13px; border-radius:8px; font-weight:600;">Lesson</div>
+              <div class="video-timeline"><div class="video-progress" id="videoProgress"></div></div>
+              <div class="video-controls">
+                <button class="vc-btn" onclick="togglePlay()" id="playBtn">⏸️ Pause</button>
+                <button class="vc-btn" onclick="seekForward()">⏩ +10s</button>
+                <button class="vc-btn" onclick="openTranscript()">📝 Transcript</button>
+                <button class="vc-btn" onclick="showQuizModal()">🧪 Quiz</button>
+                <button class="vc-btn" onclick="completeModule()">✔️ Complete</button>
+              </div>
+            </div>
+          </div>
+          <div style="flex:1 1 360px; min-width:300px;">
+            <div class="sidebar-box" style="margin-bottom:24px;">
+              <div class="sidebar-title">Module Outline</div>
+              <div id="moduleOutline"></div>
+            </div>
+            <div class="sidebar-box">
+              <div class="sidebar-title">Resources</div>
+              <button class="secondary-btn" style="width:100%; margin-bottom:10px;" onclick="downloadResource('Slides')">⬇️ Download Slides</button>
+              <button class="secondary-btn" style="width:100%; margin-bottom:10px;" onclick="downloadResource('Starter Code')">⬇️ Starter Code</button>
+              <button class="secondary-btn" style="width:100%;" onclick="downloadResource('Cheat Sheet')">⬇️ Cheat Sheet</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboardScreen" class="screen">
+      <div class="dashboard">
+        <h2 class="section-title">Your Learning Dashboard</h2>
+        <div class="stats-grid">
+          <div class="stat-card" onclick="openStatModal('Courses Enrolled', '5 active courses in progress')">
+            <div class="stat-label">Courses</div>
+            <div class="stat-value" id="statCourses">5</div>
+          </div>
+          <div class="stat-card" onclick="openStatModal('Hours Learned', 'Total watch time accumulated')">
+            <div class="stat-label">Hours Learned</div>
+            <div class="stat-value" id="statHours">42</div>
+          </div>
+            <div class="stat-card" onclick="openStatModal('Modules Completed', 'Total lessons finished across courses')">
+            <div class="stat-label">Modules</div>
+            <div class="stat-value" id="statModules">58</div>
+          </div>
+          <div class="stat-card" onclick="openStatModal('Certificates Earned', 'Professional proof of completion')">
+            <div class="stat-label">Certificates</div>
+            <div class="stat-value" id="statCerts">3</div>
+          </div>
+        </div>
+        <h2 class="section-title" style="margin-top:10px;">In Progress</h2>
+        <div class="course-grid" id="inProgressCourses"></div>
+      </div>
+    </div>
+
+    <!-- CERTIFICATES -->
+    <div id="certificatesScreen" class="screen">
+      <div style="padding:60px 40px;">
+        <h2 class="section-title">Your Certificates</h2>
+        <div class="cert-grid" id="certGrid"></div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="profileScreen" class="screen">
+      <div class="profile">
+        <div class="profile-header">
+          <div class="avatar">A</div>
+          <div class="profile-info">
+            <h2>Alex Learner</h2>
+            <div style="font-size:14px; font-weight:600; color:#2563eb; margin-bottom:8px;">Pro Member • Joined Jan 2024</div>
+            <p class="profile-bio">Focused on mastering full‑stack development and AI integration. Passionate about building scalable products and sharing knowledge with community peers.</p>
+          </div>
+        </div>
+        <h2 class="section-title" style="margin-top:0;">Preferences & Settings</h2>
+        <div class="pref-grid">
+          <div class="pref-card">
+            <div class="pref-title">Notifications</div>
+            <div class="toggle">Course Updates <div class="switch active" onclick="toggleSwitch(this)"></div></div>
+            <div class="toggle">Weekly Summary <div class="switch" onclick="toggleSwitch(this)"></div></div>
+            <div class="toggle">Promotions <div class="switch active" onclick="toggleSwitch(this)"></div></div>
+          </div>
+          <div class="pref-card">
+            <div class="pref-title">Playback Settings</div>
+            <div class="toggle">Autoplay Next <div class="switch active" onclick="toggleSwitch(this)"></div></div>
+            <div class="toggle">HD by Default <div class="switch" onclick="toggleSwitch(this)"></div></div>
+            <div class="toggle">Show Captions <div class="switch active" onclick="toggleSwitch(this)"></div></div>
+          </div>
+          <div class="pref-card">
+            <div class="pref-title">Account</div>
+            <button class="secondary-btn" style="width:100%; margin-bottom:10px;" onclick="showProfileModal('Change Password')">Change Password</button>
+            <button class="secondary-btn" style="width:100%; margin-bottom:10px;" onclick="showProfileModal('Manage Subscription')">Manage Subscription</button>
+            <button class="secondary-btn" style="width:100%;" onclick="showProfileModal('Export Data')">Export Data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="cols">
+        <div>
+          <h4>LearnX</h4>
+          <p style="font-size:14px; line-height:1.6; color:#d1d5db;">Interactive learning platform helping professionals master modern skills with practical content.</p>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <a onclick="showCatalog()">Catalog</a>
+          <a onclick="showDashboard()">Dashboard</a>
+          <a onclick="showCertificates()">Certificates</a>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <a onclick="showSupportModal()">Help Center</a>
+          <a onclick="showSupportModal()">Contact Support</a>
+          <a onclick="showSupportModal()">Report Issue</a>
+        </div>
+        <div>
+          <h4>Account</h4>
+          <a onclick="showLoginModal()">Login</a>
+          <a onclick="showLoginModal()">Create Account</a>
+          <a onclick="showProfile()">Profile</a>
+        </div>
+      </div>
+      <div class="bottom">© 2024 LearnX Platform. All rights reserved.</div>
+    </footer>
+  </div>
+
+  <!-- MODALS -->
+  <div id="genericModal" class="modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-icon" id="genericIcon">📘</div>
+        <div class="modal-title" id="genericTitle">Title</div>
+        <div class="modal-sub" id="genericSub">Subtitle text</div>
+      </div>
+      <div class="info-block" id="genericInfo">Contextual info block content for deeper explanation and user guidance related to this modal action.</div>
+      <div id="genericExtra"></div>
+      <div class="modal-actions" id="genericActions">
+        <button class="ghost-btn" onclick="closeModal()">Close</button>
+        <button class="fill-btn" onclick="closeModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="watermark">Kenkai Labs - Interactive Prototype</div>
+
+  <script>
+    // ---------- NAV / SCREEN CONTROL ----------
+    function hideAllScreens(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); }
+    function setActiveNav(label){ document.querySelectorAll('.nav-link').forEach(l=>{ l.classList.toggle('active', l.textContent===label); }); }
+    function showHome(){ hideAllScreens(); document.getElementById('homeScreen').classList.add('active'); setActiveNav('Home'); }
+    function showCatalog(){ hideAllScreens(); document.getElementById('catalogScreen').classList.add('active'); setActiveNav('Catalog'); renderCatalogCourses(); }
+    function showDashboard(){ hideAllScreens(); document.getElementById('dashboardScreen').classList.add('active'); setActiveNav('Dashboard'); renderInProgress(); }
+    function showCertificates(){ hideAllScreens(); document.getElementById('certificatesScreen').classList.add('active'); setActiveNav('Certificates'); renderCertificates(); }
+    function showProfile(){ hideAllScreens(); document.getElementById('profileScreen').classList.add('active'); setActiveNav('Profile'); }
+
+    // ---------- DATA ----------
+    const allCourses = [
+      { title:'Full-Stack Web Development', modules:12, level:'Intermediate', hours:36, desc:'React, Next.js, Node.js, databases', emoji:'💻' },
+      { title:'Data Analytics Fundamentals', modules:10, level:'Beginner', hours:28, desc:'SQL, cleaning, visualization', emoji:'📊' },
+      { title:'Advanced React Patterns', modules:8, level:'Advanced', hours:18, desc:'Hooks, context, performance', emoji:'⚛️' },
+      { title:'AI Prompt Engineering', modules:6, level:'Intermediate', hours:12, desc:'Design effective LLM prompts', emoji:'🤖' },
+      { title:'Python Automation', modules:9, level:'Beginner', hours:24, desc:'Automate tasks & workflows', emoji:'🐍' },
+      { title:'Cloud Deployment Essentials', modules:7, level:'Intermediate', hours:20, desc:'Docker, CI/CD & hosting', emoji:'☁️' }
+    ];
+    let enrolled = new Set(['Full-Stack Web Development','Data Analytics Fundamentals','Advanced React Patterns']);
+    let certificates = [ { course:'Intro to HTML & CSS', date:'Feb 2024', id:'CERT-001'}, { course:'Git & Version Control', date:'Jan 2024', id:'CERT-002'}, { course:'JavaScript Foundations', date:'Dec 2023', id:'CERT-003'}];
+    let activeCourse = null; let activeModules = []; let completedModules = 0;
+
+    // ---------- HOME INTERACTIONS ----------
+    function enrollCourse(title){ enrolled.add(title); showSuccess(`Enrolled in ${title}`, 'Course added to dashboard.'); }
+    function openCourse(title){ activeCourse = title; const courseObj = allCourses.find(c=>c.title===title); const modules = courseObj.modules; activeModules = Array.from({length:modules},(_,i)=>({ idx:i+1, title:`Module ${i+1}: ${sampleModuleTitle(i+1)}`, completed:false })); completedModules = 0; renderCourseDetail(courseObj); hideAllScreens(); document.getElementById('courseDetailScreen').classList.add('active'); }
+    function sampleModuleTitle(n){ const topics=['Introduction','Setup','Core Concepts','Hands-On','Deep Dive','Patterns','Optimization','Advanced','Integration','Testing','Deployment','Wrap-Up']; return topics[(n-1)%topics.length]; }
+
+    function renderCourseDetail(course){ document.getElementById('courseTitle').textContent = course.title; document.getElementById('courseSubtitle').textContent = `${course.desc}. Level: ${course.level}. Approx ${course.hours} hours total.`; const container = document.getElementById('modulesContainer'); container.innerHTML=''; activeModules.forEach(m=>{ const div=document.createElement('div'); div.className='module-card'; div.onclick=()=>openModule(m.idx); div.innerHTML=`<div class='module-title'>${m.title}</div><div class='module-meta'>${m.completed?"✔️ Completed":"↳ Click to open"}</div>`; container.appendChild(div); }); document.getElementById('totalCount').textContent=activeModules.length; document.getElementById('completedCount').textContent=completedModules; updateProgressBar(); const enrolledState = enrolled.has(course.title); document.getElementById('enrollBtn').style.display = enrolledState? 'none':'block'; document.getElementById('startLearningBtn').style.display = enrolledState? 'block':'none'; }
+    function enrollActiveCourse(){ if(!activeCourse) return; enrolled.add(activeCourse); showSuccess('Enrollment Confirmed', `${activeCourse} added to dashboard.`); renderCourseDetail(allCourses.find(c=>c.title===activeCourse)); }
+    function startFirstModule(){ openModule(1); }
+
+    // ---------- MODULE PLAYER ----------
+    let playing=true; let progress=0; let progressTimer=null;
+    function openModule(idx){ hideAllScreens(); document.getElementById('modulePlayerScreen').classList.add('active'); const module=activeModules[idx-1]; document.getElementById('modulePlayerTitle').textContent=module.title; renderModuleOutline(idx); progress=0; updateVideoProgress(); startProgressTimer(); }
+    function renderModuleOutline(activeIdx){ const outline=document.getElementById('moduleOutline'); outline.innerHTML=''; activeModules.forEach(m=>{ const row=document.createElement('div'); row.style.cssText='padding:10px 12px; border-radius:8px; font-size:13px; margin-bottom:6px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;'; row.onclick=()=>openModule(m.idx); row.innerHTML=`<span>${m.idx}. ${m.title}</span><span style='font-size:11px; color:${m.completed?"#10b981":"#6b7280"};'>${m.completed?"✔️":""}</span>`; if(m.idx===activeIdx){ row.style.background='#f0f7ff'; row.style.border='1px solid #2563eb'; } outline.appendChild(row); }); }
+    function startProgressTimer(){ clearInterval(progressTimer); playing=true; document.getElementById('playBtn').textContent='⏸️ Pause'; progressTimer=setInterval(()=>{ if(!playing) return; progress=Math.min(100,progress+1); updateVideoProgress(); if(progress===100){ clearInterval(progressTimer); } },160); }
+    function togglePlay(){ playing=!playing; document.getElementById('playBtn').textContent= playing?'⏸️ Pause':'▶️ Play'; }
+    function seekForward(){ progress=Math.min(100, progress+10); updateVideoProgress(); }
+    function updateVideoProgress(){ document.getElementById('videoProgress').style.width=progress+'%'; }
+    function openTranscript(){ showInfo('Transcript','Auto-generated lesson transcript available.','📝'); }
+    function showQuizModal(){ const q=`<div style='margin-top:10px;'>
+      <div class='quiz-option' onclick='markQuiz(this,true)'>Hooks allow state & side effects in functional components.</div>
+      <div class='quiz-option' onclick='markQuiz(this,false)'>Hooks replace the need for all JavaScript functions.</div>
+      <div class='quiz-option' onclick='markQuiz(this,false)'>Hooks only work in class-based components.</div>
+    </div>`; showGeneric('Quick Quiz','Select the correct statement about React Hooks.','🧪','Answer improves retention.',q,`<button class='fill-btn' onclick='closeModal()'>Finish</button>`); }
+    function markQuiz(el,correct){ if(correct){ el.classList.add('correct'); showSuccess('Correct!','Great job – you understood the concept.'); } else { el.classList.add('incorrect'); showSuccess('Incorrect','Review the lesson section again.'); } Array.from(el.parentElement.children).forEach(o=>o.style.pointerEvents='none'); }
+    function completeModule(){ const activeIdx = activeModules.findIndex(m=>m.title===document.getElementById('modulePlayerTitle').textContent); if(activeIdx>-1 && !activeModules[activeIdx].completed){ activeModules[activeIdx].completed=true; completedModules++; showSuccess('Module Completed', 'Progress updated.'); updateProgressBar(); } renderModuleOutline(activeIdx+1); }
+    function updateProgressBar(){ const pct = activeModules.length? (completedModules/activeModules.length)*100 : 0; document.getElementById('progressFill').style.width=pct+'%'; document.getElementById('completedCount').textContent=completedModules; }
+
+    // ---------- DASHBOARD / CERTIFICATES RENDER ----------
+    function renderInProgress(){ const container=document.getElementById('inProgressCourses'); container.innerHTML=''; Array.from(enrolled).forEach(title=>{ const course=allCourses.find(c=>c.title===title); if(!course) return; const card=document.createElement('div'); card.className='course-card'; card.onclick=()=>openCourse(title); card.innerHTML=`<div class='course-thumb' style='background:linear-gradient(135deg,#667eea,#764ba2); font-size:40px;'>📘</div>
+      <div class='course-content'><div class='course-title'>${title}</div><div class='course-meta'>${course.modules} modules • ${course.hours}h • ${course.level}</div><div class='course-desc'>${course.desc}</div><div class='course-footer'><span class='badge' style='background:#10b981;'>In Progress</span><button class='outline-btn' onclick='event.stopPropagation(); openCourse("${title}")'>Resume</button></div></div>`; container.appendChild(card); }); }
+    function renderCertificates(){ const grid=document.getElementById('certGrid'); grid.innerHTML=''; certificates.forEach(cert=>{ const div=document.createElement('div'); div.className='cert-card'; div.onclick=()=>showCertificateModal(cert); div.innerHTML=`<div class='seal'>CERT</div><h3 style='font-size:18px; font-weight:700; margin-bottom:8px;'>${cert.course}</h3><div style='font-size:13px; color:#6b7280; margin-bottom:12px;'>Issued ${cert.date}</div><div style='font-size:14px; color:#374151;'>ID: ${cert.id}</div>`; grid.appendChild(div); }); }
+
+    // ---------- CATALOG FILTER ----------
+    function renderCatalogCourses(){ const container=document.getElementById('catalogCourses'); container.innerHTML=''; allCourses.forEach(c=>{ const card=document.createElement('div'); card.className='course-card'; card.onclick=()=>openCourse(c.title); card.innerHTML=`<div class='course-thumb' style='background:linear-gradient(135deg,#667eea,#764ba2); font-size:42px;'>${c.emoji}</div>
+      <div class='course-content'><div class='course-title'>${c.title}</div><div class='course-meta'>${c.modules} modules • ${c.hours}h • ${c.level}</div><div class='course-desc'>${c.desc}</div><div class='course-footer'><span class='badge'>${c.level}</span><button class='outline-btn' onclick='event.stopPropagation(); enrollCourse("${c.title}")'>${enrolled.has(c.title)?"Enrolled":"Enroll"}</button></div></div>`; container.appendChild(card); }); }
+    function filterCourses(){ const q=document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('#catalogCourses .course-card').forEach(card=>{ const title=card.querySelector('.course-title').textContent.toLowerCase(); card.style.display= title.includes(q)?'flex':'none'; }); }
+    function resetFilter(){ document.getElementById('searchInput').value=''; filterCourses(); }
+
+    // ---------- GENERIC MODALS / HELPERS ----------
+    function showGeneric(title, sub, icon='📘', info='Details here.', extra='', actions='') {
+      document.getElementById('genericTitle').textContent=title;
+      document.getElementById('genericSub').textContent=sub;
+      document.getElementById('genericIcon').textContent=icon;
+      document.getElementById('genericInfo').textContent=info;
+      document.getElementById('genericExtra').innerHTML=extra;
+      document.getElementById('genericActions').innerHTML= actions || `<button class='ghost-btn' onclick='closeModal()'>Close</button><button class='fill-btn' onclick='closeModal()'>Done</button>`;
+      document.getElementById('genericModal').classList.add('active');
+    }
+    function showSuccess(title, sub){ showGeneric(title, sub, '✅', 'Action was processed successfully.'); }
+    function showInfo(title, sub, icon){ showGeneric(title, sub, icon, 'Additional context available.'); }
+    function showHomeIntroModal(){ showGeneric('Platform Overview','Learn how LearnX accelerates skill growth.','🚀','Courses, projects, certificates and smart tracking.'); }
+    function showSearchModal(){ showGeneric('Search Courses','Type keywords to refine course list.','🔍','Use filters by level or duration.'); }
+    function showLoginModal(){ showGeneric('Account Access','Authentication flows simulated for prototype.','🔐','SSO, email/password, and OAuth available.'); }
+    function showShareModal(){ showGeneric('Share Course','Copy link or share on social platforms.','📤','Encourage peers to learn with you.'); }
+    function showBookmarkModal(){ showGeneric('Course Bookmarked','Find it later in your dashboard.','📑','Bookmarks sync across devices.'); }
+    function showReportModal(){ showGeneric('Report Issue','Submit content or technical issues.','⚠️','We review within 24 hours.'); }
+    function showCertificateModal(cert){ showGeneric(`Certificate: ${cert.course}`,`Issued ${cert.date} • ID ${cert.id}`,'🎓','Share this credential on LinkedIn.'); }
+    function openStatModal(title, sub){ showGeneric(title, sub,'📈','Metrics updated daily.'); }
+    function showProfileModal(action){ showGeneric(action,`${action} flow simulated here.`,'⚙️','Settings persist to user profile.'); }
+    function showSupportModal(){ showGeneric('Support Center','Browse FAQs or create a support ticket.','💬','Average response time: 6h.'); }
+
+    // ---------- QUIZ / SWITCHES ----------
+    function toggleSwitch(el){ el.classList.toggle('active'); showSuccess(el.classList.contains('active')?'Enabled':'Disabled','Preference updated.'); }
+
+    // ---------- CERTIFICATE RENDER INIT ----------
+    renderCatalogCourses(); renderInProgress(); renderCertificates();
+
+    // ---------- CLOSE MODAL & ESC ----------
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.remove('active')); }
+    document.querySelectorAll('.modal').forEach(m=>{ m.addEventListener('click', e=>{ if(e.target===m) closeModal(); }); });
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+</body>
+</html>

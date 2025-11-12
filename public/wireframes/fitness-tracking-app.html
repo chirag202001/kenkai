@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTracker App - Interactive Prototype by Kenkai Labs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.3);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .status-bar {
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .app-header {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+        
+        .header-with-back {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #fff;
+            user-select: none;
+        }
+        
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .greeting {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .username {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+        
+        .stat-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.08);
+            cursor: pointer;
+            transition: transform .2s;
+            user-select: none;
+        }
+        
+        .stat-card:active {
+            transform: scale(.98);
+        }
+        
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            padding: 0 20px;
+            margin: 20px 0 15px;
+        }
+        
+        .workout-card {
+            margin: 0 20px 15px;
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+            cursor: pointer;
+            transition: transform .2s;
+            user-select: none;
+        }
+        
+        .workout-card:active {
+            transform: scale(.98);
+        }
+        
+        .workout-header {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: #fff;
+            padding: 15px;
+        }
+        
+        .workout-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .workout-duration {
+            font-size: 13px;
+            opacity: .9;
+        }
+        
+        .workout-details {
+            padding: 15px;
+        }
+        
+        .workout-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+        }
+        
+        .workout-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .progress-chart {
+            margin: 20px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.08);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .chart-period {
+            font-size: 13px;
+            color: #667eea;
+            cursor: pointer;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: end;
+            gap: 8px;
+            height: 120px;
+            margin-bottom: 10px;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            transition: opacity .2s;
+        }
+        
+        .chart-bar:hover {
+            opacity: .8;
+        }
+        
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .goal-card {
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .goal-card:active {
+            transform: scale(.98);
+        }
+        
+        .goal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .goal-progress {
+            background: rgba(255,255,255,.2);
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .goal-progress-fill {
+            background: #fff;
+            height: 100%;
+            border-radius: 10px;
+            width: 75%;
+        }
+        
+        .goal-text {
+            font-size: 14px;
+            opacity: .9;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 375px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+        
+        .nav-item {
+            text-align: center;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 15px;
+            color: #999;
+            user-select: none;
+        }
+        
+        .nav-item.active {
+            color: #667eea;
+        }
+        
+        .nav-item:active {
+            transform: scale(0.9);
+        }
+        
+        .exercise-list {
+            padding: 0 20px;
+        }
+        
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .exercise-item:active {
+            background: #f9f9f9;
+        }
+        
+        .exercise-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #fff;
+        }
+        
+        .exercise-info {
+            flex: 1;
+        }
+        
+        .exercise-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .exercise-details {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .social-feed {
+            padding: 0 20px 100px;
+        }
+        
+        .feed-post {
+            background: #fff;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+        }
+        
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+        }
+        
+        .post-user {
+            flex: 1;
+        }
+        
+        .post-username {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .post-time {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .post-content {
+            padding: 0 15px 15px;
+        }
+        
+        .post-text {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .post-stats {
+            background: #f9f9f9;
+            padding: 10px 15px;
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .post-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .post-action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .post-action:active {
+            background: #e5e5e5;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px;
+            width: 320px;
+            animation: modalSlideUp .3s ease;
+        }
+        
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-icon {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .modal-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .modal-stats {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        
+        .modal-stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .modal-stat-row:last-child {
+            margin-bottom: 0;
+            font-weight: 700;
+            padding-top: 8px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .modal-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .modal-btn-primary {
+            background: #667eea;
+            color: #fff;
+        }
+        
+        .modal-btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2563eb;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Dashboard Screen -->
+    <div class="phone-frame">
+        <div id="dashboardScreen" class="screen active">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="greeting">Good morning,</div>
+                <div class="username">Alex! 💪</div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card" onclick="showStatsModal('Steps', '8,547', 'steps today')">
+                    <div class="stat-icon">👣</div>
+                    <div class="stat-value">8,547</div>
+                    <div class="stat-label">Steps</div>
+                </div>
+                <div class="stat-card" onclick="showStatsModal('Calories', '650', 'calories burned')">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-value">650</div>
+                    <div class="stat-label">Calories</div>
+                </div>
+                <div class="stat-card" onclick="showStatsModal('Active Time', '45', 'minutes active')">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-value">45m</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-card" onclick="showStatsModal('Heart Rate', '72', 'bpm average')">
+                    <div class="stat-icon">❤️</div>
+                    <div class="stat-value">72</div>
+                    <div class="stat-label">Heart Rate</div>
+                </div>
+            </div>
+            
+            <div class="progress-chart">
+                <div class="chart-header">
+                    <div class="chart-title">Weekly Progress</div>
+                    <div class="chart-period" onclick="showProgressModal()">View Details</div>
+                </div>
+                <div class="chart-bars">
+                    <div class="chart-bar" style="height: 60%;" onclick="showDayModal('Mon', '6,200')"></div>
+                    <div class="chart-bar" style="height: 80%;" onclick="showDayModal('Tue', '8,100')"></div>
+                    <div class="chart-bar" style="height: 45%;" onclick="showDayModal('Wed', '4,500')"></div>
+                    <div class="chart-bar" style="height: 90%;" onclick="showDayModal('Thu', '9,200')"></div>
+                    <div class="chart-bar" style="height: 70%;" onclick="showDayModal('Fri', '7,800')"></div>
+                    <div class="chart-bar" style="height: 95%;" onclick="showDayModal('Sat', '10,100')"></div>
+                    <div class="chart-bar" style="height: 85%;" onclick="showDayModal('Sun', '8,547')"></div>
+                </div>
+                <div class="chart-labels">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
+                </div>
+            </div>
+            
+            <div class="goal-card" onclick="showGoalModal()">
+                <div class="goal-title">Daily Goal: 10,000 Steps</div>
+                <div class="goal-progress">
+                    <div class="goal-progress-fill"></div>
+                </div>
+                <div class="goal-text">You're 85% there! Keep going! 🎯</div>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Workouts Screen -->
+        <div id="workoutsScreen" class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="header-with-back">
+                    <span class="back-btn" onclick="showDashboard()">←</span>
+                    <div class="username">Workouts</div>
+                </div>
+            </div>
+            
+            <div class="section-title">Recent Workouts</div>
+            
+            <div class="workout-card" onclick="showWorkoutModal('Morning Run', '30 min', '5.2km', '420 cal')">
+                <div class="workout-header">
+                    <div class="workout-title">🏃‍♂️ Morning Run</div>
+                    <div class="workout-duration">30 minutes • Today</div>
+                </div>
+                <div class="workout-details">
+                    <div class="workout-stats">
+                        <div class="workout-stat">
+                            <span>📍</span>
+                            <span>5.2 km</span>
+                        </div>
+                        <div class="workout-stat">
+                            <span>🔥</span>
+                            <span>420 cal</span>
+                        </div>
+                        <div class="workout-stat">
+                            <span>⚡</span>
+                            <span>6:12/km</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="workout-card" onclick="showWorkoutModal('Upper Body', '45 min', '8 exercises', '380 cal')">
+                <div class="workout-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="workout-title">💪 Upper Body Strength</div>
+                    <div class="workout-duration">45 minutes • Yesterday</div>
+                </div>
+                <div class="workout-details">
+                    <div class="workout-stats">
+                        <div class="workout-stat">
+                            <span>🏋️</span>
+                            <span>8 exercises</span>
+                        </div>
+                        <div class="workout-stat">
+                            <span>🔥</span>
+                            <span>380 cal</span>
+                        </div>
+                        <div class="workout-stat">
+                            <span>💪</span>
+                            <span>3 sets each</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="workout-card" onclick="showWorkoutModal('Yoga Flow', '25 min', '12 poses', '150 cal')">
+                <div class="workout-header" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                    <div class="workout-title">🧘‍♀️ Yoga Flow</div>
+                    <div class="workout-duration">25 minutes • 2 days ago</div>
+                </div>
+                <div class="workout-details">
+                    <div class="workout-stats">
+                        <div class="workout-stat">
+                            <span>🕉️</span>
+                            <span>12 poses</span>
+                        </div>
+                        <div class="workout-stat">
+                            <span>🔥</span>
+                            <span>150 cal</span>
+                        </div>
+                        <div class="workout-stat">
+                            <span>🧘</span>
+                            <span>Flexibility</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-title">Browse Workouts</div>
+            
+            <div class="exercise-list">
+                <div class="exercise-item" onclick="showExerciseModal('Cardio', 'Running, cycling, swimming')">
+                    <div class="exercise-icon">🏃‍♂️</div>
+                    <div class="exercise-info">
+                        <div class="exercise-name">Cardio</div>
+                        <div class="exercise-details">Running, cycling, swimming</div>
+                    </div>
+                </div>
+                <div class="exercise-item" onclick="showExerciseModal('Strength', 'Weight training, bodyweight')">
+                    <div class="exercise-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">💪</div>
+                    <div class="exercise-info">
+                        <div class="exercise-name">Strength Training</div>
+                        <div class="exercise-details">Weight training, bodyweight</div>
+                    </div>
+                </div>
+                <div class="exercise-item" onclick="showExerciseModal('Yoga', 'Flexibility and mindfulness')">
+                    <div class="exercise-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">🧘‍♀️</div>
+                    <div class="exercise-info">
+                        <div class="exercise-name">Yoga & Flexibility</div>
+                        <div class="exercise-details">Flexibility and mindfulness</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Social Screen -->
+        <div id="socialScreen" class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="header-with-back">
+                    <span class="back-btn" onclick="showDashboard()">←</span>
+                    <div class="username">Community</div>
+                </div>
+            </div>
+            
+            <div class="social-feed">
+                <div class="feed-post">
+                    <div class="post-header">
+                        <div class="post-avatar">JD</div>
+                        <div class="post-user">
+                            <div class="post-username">John Doe</div>
+                            <div class="post-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-text">Just completed a 10K run! New personal best at 45:30. The morning weather was perfect for running. 🏃‍♂️💨</div>
+                        <div class="post-stats">
+                            <div class="post-stat">
+                                <span>📍</span>
+                                <span>10.0 km</span>
+                            </div>
+                            <div class="post-stat">
+                                <span>⏱️</span>
+                                <span>45:30</span>
+                            </div>
+                            <div class="post-stat">
+                                <span>🔥</span>
+                                <span>720 cal</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <div class="post-action" onclick="showLikeModal('John Doe')">👍 Like</div>
+                        <div class="post-action" onclick="showCommentModal('John Doe')">💬 Comment</div>
+                        <div class="post-action" onclick="showShareModal('John Doe')">📤 Share</div>
+                    </div>
+                </div>
+                
+                <div class="feed-post">
+                    <div class="post-header">
+                        <div class="post-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">SM</div>
+                        <div class="post-user">
+                            <div class="post-username">Sarah Miller</div>
+                            <div class="post-time">5 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-text">30-day yoga challenge complete! 🧘‍♀️ Feel so much more flexible and centered. Thank you to everyone who supported me!</div>
+                        <div class="post-stats">
+                            <div class="post-stat">
+                                <span>🧘‍♀️</span>
+                                <span>30 days</span>
+                            </div>
+                            <div class="post-stat">
+                                <span>⏱️</span>
+                                <span>15 hours total</span>
+                            </div>
+                            <div class="post-stat">
+                                <span>🏆</span>
+                                <span>Challenge completed</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <div class="post-action" onclick="showLikeModal('Sarah Miller')">👍 Like</div>
+                        <div class="post-action" onclick="showCommentModal('Sarah Miller')">💬 Comment</div>
+                        <div class="post-action" onclick="showShareModal('Sarah Miller')">📤 Share</div>
+                    </div>
+                </div>
+                
+                <div class="feed-post">
+                    <div class="post-header">
+                        <div class="post-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">MJ</div>
+                        <div class="post-user">
+                            <div class="post-username">Mike Johnson</div>
+                            <div class="post-time">1 day ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-text">Hit a new PR on deadlifts today! 💪 180kg x 3 reps. Consistency and proper form pays off. Who's joining me for leg day tomorrow?</div>
+                        <div class="post-stats">
+                            <div class="post-stat">
+                                <span>🏋️</span>
+                                <span>180kg PR</span>
+                            </div>
+                            <div class="post-stat">
+                                <span>💪</span>
+                                <span>Deadlift</span>
+                            </div>
+                            <div class="post-stat">
+                                <span>🔥</span>
+                                <span>450 cal</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <div class="post-action" onclick="showLikeModal('Mike Johnson')">👍 Like</div>
+                        <div class="post-action" onclick="showCommentModal('Mike Johnson')">💬 Comment</div>
+                        <div class="post-action" onclick="showShareModal('Mike Johnson')">📤 Share</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Screen -->
+        <div id="profileScreen" class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="header-with-back">
+                    <span class="back-btn" onclick="showDashboard()">←</span>
+                    <div class="username">Profile</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; padding: 30px 20px;">
+                <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 36px; font-weight: 700;">A</div>
+                <div style="font-size: 24px; font-weight: 700; margin-bottom: 5px;">Alex Thompson</div>
+                <div style="color: #666; margin-bottom: 20px;">Fitness Enthusiast</div>
+                <div style="display: flex; gap: 30px; justify-content: center;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: 700; color: #667eea;">247</div>
+                        <div style="font-size: 13px; color: #666;">Workouts</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: 700; color: #667eea;">1.2M</div>
+                        <div style="font-size: 13px; color: #666;">Total Steps</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: 700; color: #667eea;">156</div>
+                        <div style="font-size: 13px; color: #666;">Friends</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-title">Achievements</div>
+            
+            <div class="stats-grid">
+                <div class="stat-card" onclick="showAchievementModal('First 5K', 'Completed your first 5K run')">
+                    <div class="stat-icon">🏃‍♂️</div>
+                    <div class="stat-value" style="font-size: 16px;">First 5K</div>
+                    <div class="stat-label">Unlocked</div>
+                </div>
+                <div class="stat-card" onclick="showAchievementModal('Consistency', '30 days workout streak')">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-value" style="font-size: 16px;">Streak Master</div>
+                    <div class="stat-label">30 days</div>
+                </div>
+                <div class="stat-card" onclick="showAchievementModal('Social', 'Made 50 workout friends')">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value" style="font-size: 16px;">Social Butterfly</div>
+                    <div class="stat-label">50 friends</div>
+                </div>
+                <div class="stat-card" onclick="showAchievementModal('Goal Crusher', 'Achieved 10 fitness goals')">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value" style="font-size: 16px;">Goal Crusher</div>
+                    <div class="stat-label">10 goals</div>
+                </div>
+            </div>
+            
+            <div class="section-title">Settings</div>
+            
+            <div class="exercise-list">
+                <div class="exercise-item" onclick="showSettingModal('Goals', 'Set your fitness targets')">
+                    <div class="exercise-icon">🎯</div>
+                    <div class="exercise-info">
+                        <div class="exercise-name">Goals & Targets</div>
+                        <div class="exercise-details">Set your fitness targets</div>
+                    </div>
+                </div>
+                <div class="exercise-item" onclick="showSettingModal('Privacy', 'Manage your privacy settings')">
+                    <div class="exercise-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🔒</div>
+                    <div class="exercise-info">
+                        <div class="exercise-name">Privacy Settings</div>
+                        <div class="exercise-details">Manage your privacy settings</div>
+                    </div>
+                </div>
+                <div class="exercise-item" onclick="showSettingModal('Notifications', 'Configure app notifications')">
+                    <div class="exercise-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🔔</div>
+                    <div class="exercise-info">
+                        <div class="exercise-name">Notifications</div>
+                        <div class="exercise-details">Configure app notifications</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="showDashboard()">🏠</div>
+            <div class="nav-item" onclick="showWorkouts()">💪</div>
+            <div class="nav-item" onclick="showSocial()">👥</div>
+            <div class="nav-item" onclick="showProfile()">👤</div>
+        </div>
+    </div>
+    
+    <!-- Stats Modal -->
+    <div id="statsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">📊</div>
+                <div class="modal-title" id="statsTitle">Steps Today</div>
+                <div class="modal-subtitle" id="statsSubtitle">Daily activity breakdown</div>
+            </div>
+            <div class="modal-stats">
+                <div class="modal-stat-row">
+                    <span>Current:</span>
+                    <span id="statsCurrent">8,547 steps</span>
+                </div>
+                <div class="modal-stat-row">
+                    <span>Goal:</span>
+                    <span>10,000 steps</span>
+                </div>
+                <div class="modal-stat-row">
+                    <span>Progress:</span>
+                    <span>85% complete</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button>
+                <button class="modal-btn modal-btn-primary" onclick="closeModal()">View History</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Workout Detail Modal -->
+    <div id="workoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">🏃‍♂️</div>
+                <div class="modal-title" id="workoutTitle">Morning Run</div>
+                <div class="modal-subtitle" id="workoutSubtitle">Workout completed today</div>
+            </div>
+            <div class="modal-stats">
+                <div class="modal-stat-row">
+                    <span>Duration:</span>
+                    <span id="workoutDuration">30 minutes</span>
+                </div>
+                <div class="modal-stat-row">
+                    <span>Distance:</span>
+                    <span id="workoutDistance">5.2 km</span>
+                </div>
+                <div class="modal-stat-row">
+                    <span>Calories:</span>
+                    <span id="workoutCalories">420 cal</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button>
+                <button class="modal-btn modal-btn-primary" onclick="closeModal()">Share Workout</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Social Action Modal -->
+    <div id="socialModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">👍</div>
+                <div class="modal-title" id="socialTitle">Like Post</div>
+                <div class="modal-subtitle" id="socialSubtitle">Show support for John Doe's workout</div>
+            </div>
+            <div style="text-align: center; padding: 20px 0;">
+                <div style="font-size: 16px; margin-bottom: 10px;">Great work on that run! 🎉</div>
+                <div style="font-size: 14px; color: #666;">Your encouragement helps build the community</div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="showSuccessModal('Liked!')">Send Like</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">✅</div>
+                <div class="modal-title" id="successTitle">Success!</div>
+                <div class="modal-subtitle" id="successSubtitle">Action completed successfully</div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-primary" onclick="closeModal()" style="width: 100%;">Continue</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="watermark">Kenkai Labs - Interactive Prototype</div>
+    
+    <script>
+        function showDashboard() {
+            hideAllScreens();
+            document.getElementById('dashboardScreen').classList.add('active');
+            updateNav(0);
+        }
+        
+        function showWorkouts() {
+            hideAllScreens();
+            document.getElementById('workoutsScreen').classList.add('active');
+            updateNav(1);
+        }
+        
+        function showSocial() {
+            hideAllScreens();
+            document.getElementById('socialScreen').classList.add('active');
+            updateNav(2);
+        }
+        
+        function showProfile() {
+            hideAllScreens();
+            document.getElementById('profileScreen').classList.add('active');
+            updateNav(3);
+        }
+        
+        function hideAllScreens() {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+        }
+        
+        function updateNav(index) {
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+        }
+        
+        function showStatsModal(title, value, subtitle) {
+            document.getElementById('statsTitle').textContent = title;
+            document.getElementById('statsCurrent').textContent = value;
+            document.getElementById('statsSubtitle').textContent = subtitle;
+            document.getElementById('statsModal').classList.add('active');
+        }
+        
+        function showWorkoutModal(title, duration, distance, calories) {
+            document.getElementById('workoutTitle').textContent = title;
+            document.getElementById('workoutDuration').textContent = duration;
+            document.getElementById('workoutDistance').textContent = distance;
+            document.getElementById('workoutCalories').textContent = calories;
+            document.getElementById('workoutModal').classList.add('active');
+        }
+        
+        function showProgressModal() {
+            showStatsModal('Weekly Progress', '7,485 avg', 'steps per day this week');
+        }
+        
+        function showDayModal(day, steps) {
+            showStatsModal(day + ' Progress', steps + ' steps', 'activity for ' + day);
+        }
+        
+        function showGoalModal() {
+            showStatsModal('Daily Goal', '8,547 / 10,000', 'steps completed today');
+        }
+        
+        function showExerciseModal(name, desc) {
+            showWorkoutModal(name + ' Workouts', 'Various durations', desc, 'Multiple options');
+        }
+        
+        function showLikeModal(username) {
+            document.getElementById('socialTitle').textContent = 'Like Post';
+            document.getElementById('socialSubtitle').textContent = 'Show support for ' + username + "'s workout";
+            document.getElementById('socialModal').classList.add('active');
+        }
+        
+        function showCommentModal(username) {
+            document.getElementById('socialTitle').textContent = 'Add Comment';
+            document.getElementById('socialSubtitle').textContent = 'Leave a comment on ' + username + "'s post";
+            document.getElementById('socialModal').classList.add('active');
+        }
+        
+        function showShareModal(username) {
+            document.getElementById('socialTitle').textContent = 'Share Post';
+            document.getElementById('socialSubtitle').textContent = 'Share ' + username + "'s workout with friends";
+            document.getElementById('socialModal').classList.add('active');
+        }
+        
+        function showAchievementModal(title, desc) {
+            showStatsModal(title, 'Unlocked!', desc);
+        }
+        
+        function showSettingModal(title, desc) {
+            showStatsModal(title, 'Configure', desc);
+        }
+        
+        function showSuccessModal(message) {
+            closeModal();
+            setTimeout(() => {
+                document.getElementById('successTitle').textContent = 'Success!';
+                document.getElementById('successSubtitle').textContent = message;
+                document.getElementById('successModal').classList.add('active');
+            }, 300);
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+        
+        // ESC key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -38,8 +38,8 @@ const ProcessSection = () => {
   ];
 
   return (
-    <section id="process" className="section-padding bg-gray-50">
-      <div className="container-width">
+    <section id="process" className="py-16 md:py-20 bg-gray-50">
+      <div className="container-width px-4 md:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
             How It Works

@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldPro App - Interactive Prototype by Kenkai Labs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.3);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .status-bar {
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            background: #2563eb;
+            color: #fff;
+        }
+        
+        .app-header {
+            padding: 15px 20px;
+            background: #2563eb;
+            color: #fff;
+        }
+        
+        .header-with-back {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #fff;
+            user-select: none;
+        }
+        
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .greeting {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .username {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #10b981;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+        
+        .action-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.08);
+            cursor: pointer;
+            transition: transform .2s;
+            user-select: none;
+            text-align: center;
+        }
+        
+        .action-card:active {
+            transform: scale(.98);
+        }
+        
+        .action-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .action-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 5px;
+        }
+        
+        .action-subtitle {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            padding: 0 20px;
+            margin: 20px 0 15px;
+        }
+        
+        .job-card {
+            margin: 0 20px 15px;
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+            cursor: pointer;
+            transition: transform .2s;
+            user-select: none;
+        }
+        
+        .job-card:active {
+            transform: scale(.98);
+        }
+        
+        .job-header {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #fff;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .job-info {
+            flex: 1;
+        }
+        
+        .job-id {
+            font-size: 14px;
+            opacity: .9;
+            margin-bottom: 5px;
+        }
+        
+        .job-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .job-status {
+            padding: 4px 10px;
+            background: rgba(255,255,255,.2);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .job-details {
+            padding: 15px;
+        }
+        
+        .job-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .job-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .job-description {
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+        
+        .job-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .job-btn {
+            flex: 1;
+            padding: 8px 16px;
+            border: 1px solid #2563eb;
+            background: #fff;
+            color: #2563eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .job-btn.primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        
+        .job-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .map-container {
+            margin: 20px;
+            height: 200px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .map-container:active {
+            transform: scale(.98);
+        }
+        
+        .map-content {
+            text-align: center;
+        }
+        
+        .map-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .map-text {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .form-container {
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .form-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .form-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .form-btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        
+        .form-btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 375px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+        
+        .nav-item {
+            text-align: center;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 15px;
+            color: #999;
+            user-select: none;
+        }
+        
+        .nav-item.active {
+            color: #2563eb;
+        }
+        
+        .nav-item:active {
+            transform: scale(0.9);
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .checklist-item:active {
+            background: #f9f9f9;
+        }
+        
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #2563eb;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2563eb;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        .checklist-checkbox.checked {
+            background: #2563eb;
+            color: #fff;
+        }
+        
+        .checklist-text {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .time-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .time-info {
+            flex: 1;
+        }
+        
+        .time-label {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .time-value {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .time-btn {
+            padding: 8px 16px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .time-btn:active {
+            background: #1d4ed8;
+            transform: scale(0.95);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px;
+            width: 320px;
+            animation: modalSlideUp .3s ease;
+        }
+        
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-icon {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .modal-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .modal-info {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        
+        .modal-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .modal-info-row:last-child {
+            margin-bottom: 0;
+            font-weight: 700;
+            padding-top: 8px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .modal-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .modal-btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        
+        .modal-btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .signature-pad {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .signature-pad:active {
+            border-color: #2563eb;
+            background: #f8fafc;
+        }
+        
+        .signature-placeholder {
+            text-align: center;
+            color: #666;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2563eb;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Dashboard Screen -->
+    <div class="phone-frame">
+        <div id="dashboardScreen" class="screen active">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 📍 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="greeting">Good morning,</div>
+                <div class="username">
+                    John Smith
+                    <span class="status-indicator">Online</span>
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <div class="action-card" onclick="showSchedule()">
+                    <div class="action-icon">📅</div>
+                    <div class="action-title">Schedule</div>
+                    <div class="action-subtitle">View today's jobs</div>
+                </div>
+                <div class="action-card" onclick="showTimeTracker()">
+                    <div class="action-icon">⏱️</div>
+                    <div class="action-title">Time Tracker</div>
+                    <div class="action-subtitle">Log work hours</div>
+                </div>
+                <div class="action-card" onclick="showMapModal()">
+                    <div class="action-icon">🗺️</div>
+                    <div class="action-title">GPS Tracking</div>
+                    <div class="action-subtitle">Current location</div>
+                </div>
+                <div class="action-card" onclick="showOfflineModal()">
+                    <div class="action-icon">📱</div>
+                    <div class="action-title">Offline Mode</div>
+                    <div class="action-subtitle">Sync when online</div>
+                </div>
+            </div>
+            
+            <div class="section-title">Today's Jobs</div>
+            
+            <div class="job-card" onclick="showJobDetail('Plumbing Repair', '123 Main St', 'Emergency leak repair')">
+                <div class="job-header">
+                    <div class="job-info">
+                        <div class="job-id">#JOB-2024-001</div>
+                        <div class="job-title">Plumbing Repair</div>
+                    </div>
+                    <div class="job-status">In Progress</div>
+                </div>
+                <div class="job-details">
+                    <div class="job-meta">
+                        <div class="job-meta-item">
+                            <span>📍</span>
+                            <span>123 Main St</span>
+                        </div>
+                        <div class="job-meta-item">
+                            <span>⏰</span>
+                            <span>9:00 AM</span>
+                        </div>
+                        <div class="job-meta-item">
+                            <span>👤</span>
+                            <span>John Doe</span>
+                        </div>
+                    </div>
+                    <div class="job-description">Emergency leak repair in kitchen sink. Customer reported water damage.</div>
+                    <div class="job-actions">
+                        <button class="job-btn" onclick="event.stopPropagation(); showDirectionsModal()">Directions</button>
+                        <button class="job-btn primary" onclick="event.stopPropagation(); showStartJobModal()">Start Job</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="job-card" onclick="showJobDetail('HVAC Maintenance', '456 Oak Ave', 'Routine system check')">
+                <div class="job-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <div class="job-info">
+                        <div class="job-id">#JOB-2024-002</div>
+                        <div class="job-title">HVAC Maintenance</div>
+                    </div>
+                    <div class="job-status">Scheduled</div>
+                </div>
+                <div class="job-details">
+                    <div class="job-meta">
+                        <div class="job-meta-item">
+                            <span>📍</span>
+                            <span>456 Oak Ave</span>
+                        </div>
+                        <div class="job-meta-item">
+                            <span>⏰</span>
+                            <span>1:00 PM</span>
+                        </div>
+                        <div class="job-meta-item">
+                            <span>👤</span>
+                            <span>Sarah Wilson</span>
+                        </div>
+                    </div>
+                    <div class="job-description">Routine HVAC system maintenance and filter replacement.</div>
+                    <div class="job-actions">
+                        <button class="job-btn" onclick="event.stopPropagation(); showDirectionsModal()">Directions</button>
+                        <button class="job-btn" onclick="event.stopPropagation(); showViewJobModal()">View Details</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="map-container" onclick="showMapModal()">
+                <div class="map-content">
+                    <div class="map-icon">📍</div>
+                    <div class="map-text">View GPS Location</div>
+                </div>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Schedule Screen -->
+        <div id="scheduleScreen" class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 📍 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="header-with-back">
+                    <span class="back-btn" onclick="showDashboard()">←</span>
+                    <div class="username">Today's Schedule</div>
+                </div>
+            </div>
+            
+            <div class="time-entry">
+                <div class="time-info">
+                    <div class="time-label">Morning Shift Start</div>
+                    <div class="time-value">8:00 AM - Logged in</div>
+                </div>
+                <button class="time-btn" onclick="showTimeModal('shift-start')">✓ Done</button>
+            </div>
+            
+            <div class="time-entry">
+                <div class="time-info">
+                    <div class="time-label">Plumbing Repair</div>
+                    <div class="time-value">9:00 AM - 123 Main St</div>
+                </div>
+                <button class="time-btn" onclick="showTimeModal('job-start')">Start</button>
+            </div>
+            
+            <div class="time-entry">
+                <div class="time-info">
+                    <div class="time-label">Travel Time</div>
+                    <div class="time-value">11:30 AM - To next location</div>
+                </div>
+                <button class="time-btn" style="background: #6b7280;" onclick="showTimeModal('travel')">Log</button>
+            </div>
+            
+            <div class="time-entry">
+                <div class="time-info">
+                    <div class="time-label">HVAC Maintenance</div>
+                    <div class="time-value">1:00 PM - 456 Oak Ave</div>
+                </div>
+                <button class="time-btn" style="background: #6b7280;" onclick="showTimeModal('next-job')">Pending</button>
+            </div>
+            
+            <div class="time-entry">
+                <div class="time-info">
+                    <div class="time-label">End of Shift</div>
+                    <div class="time-value">5:00 PM - Clock out</div>
+                </div>
+                <button class="time-btn" style="background: #6b7280;" onclick="showTimeModal('shift-end')">Pending</button>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Time Tracker Screen -->
+        <div id="timeTrackerScreen" class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 📍 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="header-with-back">
+                    <span class="back-btn" onclick="showDashboard()">←</span>
+                    <div class="username">Time Tracker</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #fff; margin: 20px; border-radius: 16px;">
+                <div style="font-size: 48px; font-weight: 700; margin-bottom: 10px;" id="timer">02:15:30</div>
+                <div style="font-size: 16px; margin-bottom: 20px;">Current Job: Plumbing Repair</div>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button class="time-btn" onclick="showPauseModal()" style="background: #fbbf24;">⏸️ Pause</button>
+                    <button class="time-btn" onclick="showStopModal()" style="background: #ef4444;">⏹️ Stop</button>
+                </div>
+            </div>
+            
+            <div class="section-title">Today's Log</div>
+            
+            <div class="time-entry">
+                <div class="time-info">
+                    <div class="time-label">Job #001 - Plumbing Repair</div>
+                    <div class="time-value">Started: 9:00 AM (Running)</div>
+                </div>
+                <button class="time-btn" onclick="showJobTimeModal()">Details</button>
+            </div>
+            
+            <div class="time-entry">
+                <div class="time-info">
+                    <div class="time-label">Travel to Job Site</div>
+                    <div class="time-value">8:30 AM - 9:00 AM (30 min)</div>
+                </div>
+                <button class="time-btn" style="background: #10b981;" onclick="showTravelTimeModal()">✓ Logged</button>
+            </div>
+            
+            <div class="time-entry">
+                <div class="time-info">
+                    <div class="time-label">Morning Check-in</div>
+                    <div class="time-value">8:00 AM - 8:30 AM (30 min)</div>
+                </div>
+                <button class="time-btn" style="background: #10b981;" onclick="showCheckinModal()">✓ Logged</button>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Job Details Screen -->
+        <div id="jobDetailsScreen" class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 📍 🔋</span>
+            </div>
+            
+            <div class="app-header">
+                <div class="header-with-back">
+                    <span class="back-btn" onclick="showDashboard()">←</span>
+                    <div class="username">Job Details</div>
+                </div>
+            </div>
+            
+            <div class="form-container">
+                <div class="job-card" style="margin: 0 0 20px 0;">
+                    <div class="job-header">
+                        <div class="job-info">
+                            <div class="job-id">#JOB-2024-001</div>
+                            <div class="job-title">Plumbing Repair</div>
+                        </div>
+                        <div class="job-status">In Progress</div>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-meta">
+                            <div class="job-meta-item">
+                                <span>📍</span>
+                                <span>123 Main St, Downtown</span>
+                            </div>
+                            <div class="job-meta-item">
+                                <span>👤</span>
+                                <span>John Doe</span>
+                            </div>
+                            <div class="job-meta-item">
+                                <span>📞</span>
+                                <span>(555) 123-4567</span>
+                            </div>
+                        </div>
+                        <div class="job-description">Emergency leak repair in kitchen sink. Customer reported water damage. Need to assess pipe condition and replace if necessary.</div>
+                    </div>
+                </div>
+                
+                <div class="section-title" style="margin-top: 0;">Task Checklist</div>
+                
+                <div style="background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checklist-checkbox checked">✓</div>
+                        <div class="checklist-text">Assess water damage</div>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checklist-checkbox checked">✓</div>
+                        <div class="checklist-text">Turn off water supply</div>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checklist-checkbox">○</div>
+                        <div class="checklist-text">Remove damaged pipe section</div>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checklist-checkbox">○</div>
+                        <div class="checklist-text">Install replacement parts</div>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checklist-checkbox">○</div>
+                        <div class="checklist-text">Test for leaks</div>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checklist-checkbox">○</div>
+                        <div class="checklist-text">Get customer signature</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Work Notes</label>
+                    <textarea class="form-textarea" placeholder="Enter details about the work performed..." onclick="showNotesModal()">Found corroded pipe section behind sink. Replaced 2ft of copper pipe with PEX. No additional damage found.</textarea>
+                </div>
+                
+                <div class="signature-pad" onclick="showSignatureModal()">
+                    <div class="signature-placeholder">
+                        <div style="font-size: 24px; margin-bottom: 10px;">✍️</div>
+                        <div>Tap to capture customer signature</div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="form-btn form-btn-secondary" onclick="showSaveModal()">Save Progress</button>
+                    <button class="form-btn form-btn-primary" onclick="showCompleteModal()">Complete Job</button>
+                </div>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="showDashboard()">🏠</div>
+            <div class="nav-item" onclick="showSchedule()">📅</div>
+            <div class="nav-item" onclick="showTimeTracker()">⏱️</div>
+            <div class="nav-item" onclick="showJobDetails()">📋</div>
+        </div>
+    </div>
+    
+    <!-- Job Detail Modal -->
+    <div id="jobModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">🔧</div>
+                <div class="modal-title" id="jobModalTitle">Plumbing Repair</div>
+                <div class="modal-subtitle" id="jobModalSubtitle">Emergency service call</div>
+            </div>
+            <div class="modal-info">
+                <div class="modal-info-row">
+                    <span>Location:</span>
+                    <span id="jobModalLocation">123 Main St</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Customer:</span>
+                    <span>John Doe</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Time:</span>
+                    <span>9:00 AM</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Priority:</span>
+                    <span>High</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button>
+                <button class="modal-btn modal-btn-primary" onclick="closeModal(); showJobDetails();">View Full Details</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- GPS/Map Modal -->
+    <div id="mapModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">📍</div>
+                <div class="modal-title">GPS Location</div>
+                <div class="modal-subtitle">Real-time location tracking</div>
+            </div>
+            <div class="modal-info">
+                <div class="modal-info-row">
+                    <span>Current Location:</span>
+                    <span>Downtown Area</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Coordinates:</span>
+                    <span>40.7128, -74.0060</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Last Updated:</span>
+                    <span>Just now</span>
+                </div>
+                <div class="modal-info-row">
+                    <span>Accuracy:</span>
+                    <span>±5 meters</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button>
+                <button class="modal-btn modal-btn-primary" onclick="showDirectionsModal()">Get Directions</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Offline Mode Modal -->
+    <div id="offlineModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">📱</div>
+                <div class="modal-title">Offline Mode</div>
+                <div class="modal-subtitle">Work without internet connection</div>
+            </div>
+            <div style="text-align: center; padding: 20px 0;">
+                <div style="font-size: 16px; margin-bottom: 15px;">📊 Offline Data Available</div>
+                <div style="font-size: 14px; color: #666; line-height: 1.5;">
+                    • 3 scheduled jobs downloaded<br>
+                    • Customer information cached<br>
+                    • Forms can be completed offline<br>
+                    • Data will sync when online
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="showOfflineEnabledModal()">Enable Offline Mode</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Signature Modal -->
+    <div id="signatureModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">✍️</div>
+                <div class="modal-title">Customer Signature</div>
+                <div class="modal-subtitle">Capture digital signature</div>
+            </div>
+            <div style="background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; height: 150px; display: flex; align-items: center; justify-content: center; margin: 15px 0; cursor: pointer;" onclick="showSignatureCapturedModal()">
+                <div style="text-align: center; color: #6c757d;">
+                    <div style="font-size: 24px; margin-bottom: 5px;">✏️</div>
+                    <div>Tap to sign</div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="showSignatureCapturedModal()">Capture Signature</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">✅</div>
+                <div class="modal-title" id="successTitle">Success!</div>
+                <div class="modal-subtitle" id="successSubtitle">Action completed successfully</div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-primary" onclick="closeModal()" style="width: 100%;">Continue</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="watermark">Kenkai Labs - Interactive Prototype</div>
+    
+    <script>
+        function showDashboard() {
+            hideAllScreens();
+            document.getElementById('dashboardScreen').classList.add('active');
+            updateNav(0);
+        }
+        
+        function showSchedule() {
+            hideAllScreens();
+            document.getElementById('scheduleScreen').classList.add('active');
+            updateNav(1);
+        }
+        
+        function showTimeTracker() {
+            hideAllScreens();
+            document.getElementById('timeTrackerScreen').classList.add('active');
+            updateNav(2);
+        }
+        
+        function showJobDetails() {
+            hideAllScreens();
+            document.getElementById('jobDetailsScreen').classList.add('active');
+            updateNav(3);
+        }
+        
+        function hideAllScreens() {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+        }
+        
+        function updateNav(index) {
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+        }
+        
+        function showJobDetail(title, location, description) {
+            document.getElementById('jobModalTitle').textContent = title;
+            document.getElementById('jobModalLocation').textContent = location;
+            document.getElementById('jobModalSubtitle').textContent = description;
+            document.getElementById('jobModal').classList.add('active');
+        }
+        
+        function showMapModal() {
+            document.getElementById('mapModal').classList.add('active');
+        }
+        
+        function showOfflineModal() {
+            document.getElementById('offlineModal').classList.add('active');
+        }
+        
+        function showSignatureModal() {
+            document.getElementById('signatureModal').classList.add('active');
+        }
+        
+        function showDirectionsModal() {
+            closeModal();
+            setTimeout(() => {
+                showSuccessModal('Directions Opened', 'GPS navigation started to job location');
+            }, 300);
+        }
+        
+        function showStartJobModal() {
+            showSuccessModal('Job Started', 'Timer started for Plumbing Repair job');
+        }
+        
+        function showViewJobModal() {
+            closeModal();
+            setTimeout(() => {
+                showJobDetails();
+            }, 300);
+        }
+        
+        function showTimeModal(type) {
+            const titles = {
+                'shift-start': 'Shift Started',
+                'job-start': 'Job Started',
+                'travel': 'Travel Time Logged',
+                'next-job': 'Next Job',
+                'shift-end': 'Shift Ended'
+            };
+            const subtitles = {
+                'shift-start': 'Successfully clocked in for the day',
+                'job-start': 'Timer started for current job',
+                'travel': 'Travel time recorded',
+                'next-job': 'Ready to start next scheduled job',
+                'shift-end': 'Day completed, all jobs logged'
+            };
+            showSuccessModal(titles[type], subtitles[type]);
+        }
+        
+        function showPauseModal() {
+            showSuccessModal('Timer Paused', 'Job timer temporarily stopped');
+        }
+        
+        function showStopModal() {
+            showSuccessModal('Timer Stopped', 'Job completed and time logged');
+        }
+        
+        function showJobTimeModal() {
+            showSuccessModal('Job Time Details', 'Total time: 2 hours 15 minutes');
+        }
+        
+        function showTravelTimeModal() {
+            showSuccessModal('Travel Time', 'Logged 30 minutes travel time');
+        }
+        
+        function showCheckinModal() {
+            showSuccessModal('Check-in Complete', 'Morning prep and equipment check logged');
+        }
+        
+        function showNotesModal() {
+            showSuccessModal('Work Notes', 'Detailed notes saved for job documentation');
+        }
+        
+        function showSaveModal() {
+            showSuccessModal('Progress Saved', 'Job progress saved to device');
+        }
+        
+        function showCompleteModal() {
+            showSuccessModal('Job Completed', 'Job marked complete and ready for invoicing');
+        }
+        
+        function showSignatureCapturedModal() {
+            closeModal();
+            setTimeout(() => {
+                showSuccessModal('Signature Captured', 'Customer signature saved successfully');
+            }, 300);
+        }
+        
+        function showOfflineEnabledModal() {
+            closeModal();
+            setTimeout(() => {
+                showSuccessModal('Offline Mode Enabled', 'You can now work without internet connection');
+            }, 300);
+        }
+        
+        function toggleCheck(element) {
+            const checkbox = element.querySelector('.checklist-checkbox');
+            if (checkbox.classList.contains('checked')) {
+                checkbox.classList.remove('checked');
+                checkbox.textContent = '○';
+            } else {
+                checkbox.classList.add('checked');
+                checkbox.textContent = '✓';
+            }
+        }
+        
+        function showSuccessModal(title, subtitle) {
+            document.getElementById('successTitle').textContent = title;
+            document.getElementById('successSubtitle').textContent = subtitle;
+            document.getElementById('successModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+        
+        // Timer functionality
+        let timerInterval;
+        let seconds = 8130; // 2:15:30
+        
+        function updateTimer() {
+            const hours = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            const display = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            document.getElementById('timer').textContent = display;
+            
+            seconds++;
+        }
+        
+        // Start timer when page loads
+        timerInterval = setInterval(updateTimer, 1000);
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+        
+        // ESC key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

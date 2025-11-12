@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import StrengthsStrip from "@/components/StrengthsStrip";
 import { Search, Map, Wrench, CheckCircle, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -64,26 +65,49 @@ export default function ServicesPage() {
     {
       id: "execution",
       icon: Wrench,
-      title: "Execution & Embedded Delivery",
-      subtitle: "Implementation Partnership",
-      goal: "We implement the roadmap ourselves or embed with your team as fractional CTO / dev partner.",
-      whoFor: "Teams ready to build, companies needing execution support, ongoing development needs.",
-      price: "Multiple engagement models",
-      timeline: "4-16 weeks (project dependent)",
+      title: "Full-Stack Development & Execution",
+      subtitle: "Web, Mobile & Software Development",
+      goal: "We build your complete solution - web applications, mobile apps, websites, and custom software with modern tech stacks.",
+      whoFor: "Startups, SMBs, and enterprises needing end-to-end development or team augmentation.",
+      price: "Project-based or retainer models",
+      timeline: "6-24 weeks (project dependent)",
       deliverables: [
-        "Code delivery with automated CI/CD",
-        "Quality gates & testing protocols",
-        "Team training & knowledge transfer",
-        "Handoff documentation",
-        "Optional ongoing maintenance"
+        "Production-ready web/mobile applications",
+        "Responsive websites with modern UI/UX",
+        "Cloud deployment & infrastructure setup",
+        "Quality assurance & testing",
+        "Documentation & knowledge transfer",
+        "3-6 months post-launch support"
+      ],
+      capabilities: [
+        {
+          type: "Web Applications",
+          tech: "React, Next.js, Node.js, TypeScript, Python/Django",
+          examples: "SaaS platforms, dashboards, admin panels, e-commerce"
+        },
+        {
+          type: "Mobile Apps",
+          tech: "React Native, Flutter, iOS/Android native",
+          examples: "Consumer apps, enterprise mobile, cross-platform solutions"
+        },
+        {
+          type: "Websites",
+          tech: "Next.js, WordPress, Webflow integration",
+          examples: "Corporate sites, landing pages, marketing websites"
+        },
+        {
+          type: "Custom Software",
+          tech: "API development, microservices, integrations",
+          examples: "Backend systems, third-party integrations, automation"
+        }
       ],
       modes: [
-        "Fixed-scope MVP build",
-        "Retainer / sprint-based delivery",
-        "Embedded team augmentation",
-        "Fractional CTO support"
+        "Fixed-scope MVP build (₹5L-15L)",
+        "Monthly retainer (₹1L-3L/month)",
+        "Dedicated team augmentation",
+        "Fractional CTO + dev support"
       ],
-      cta: "Talk to an Engineer",
+      cta: "Discuss Your Project",
       ctaLink: "/book-call?service=execution"
     }
   ];
@@ -126,8 +150,8 @@ export default function ServicesPage() {
       <Header />
       
       {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-gradient-to-br from-blue-50 via-white to-gray-50">
-        <div className="container-width section-padding">
+      <section className="pt-24 pb-8 bg-gradient-to-br from-blue-50 via-white to-gray-50">
+        <div className="container-width px-4 md:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
               Our Services
@@ -138,7 +162,7 @@ export default function ServicesPage() {
             </p>
             
             {/* Anchor Navigation */}
-            <div className="flex flex-wrap justify-center gap-4 mb-8">
+            <div className="flex flex-wrap justify-center gap-4">
               <a href="#discovery" className="btn-secondary text-sm">Problem Discovery</a>
               <a href="#strategy" className="btn-secondary text-sm">Roadmap & Strategy</a>
               <a href="#execution" className="btn-secondary text-sm">Build & Execute</a>
@@ -146,6 +170,9 @@ export default function ServicesPage() {
           </div>
         </div>
       </section>
+
+  {/* Reinforce founder-led strengths */}
+  <StrengthsStrip />
 
       {/* Services Detail */}
       {services.map((service, index) => {
@@ -156,9 +183,9 @@ export default function ServicesPage() {
           <section 
             key={service.id}
             id={service.id}
-            className={`section-padding ${isEven ? 'bg-white' : 'bg-gray-50'}`}
+            className={`py-16 md:py-20 ${isEven ? 'bg-white' : 'bg-gray-50'}`}
           >
-            <div className="container-width">
+            <div className="container-width px-4 md:px-8">
               <div className="max-w-6xl mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                   <div className={isEven ? '' : 'lg:order-2'}>
@@ -252,6 +279,25 @@ export default function ServicesPage() {
                           </ul>
                         </>
                       )}
+
+                      {service.capabilities && (
+                        <>
+                          <h4 className="font-bold text-gray-900 mb-4 mt-8">Development Capabilities</h4>
+                          <div className="space-y-4">
+                            {service.capabilities.map((cap, idx) => (
+                              <div key={idx} className="border-l-4 border-blue-600 pl-4">
+                                <div className="font-semibold text-gray-900 mb-1">{cap.type}</div>
+                                <div className="text-sm text-gray-600 mb-1">
+                                  <span className="font-medium">Tech:</span> {cap.tech}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  <span className="font-medium">Examples:</span> {cap.examples}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -262,8 +308,8 @@ export default function ServicesPage() {
       })}
 
       {/* Comparison Table */}
-      <section className="section-padding bg-white">
-        <div className="container-width">
+      <section className="py-16 md:py-20 bg-white">
+        <div className="container-width px-4 md:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
               Service Comparison
@@ -314,8 +360,8 @@ export default function ServicesPage() {
       </section>
 
       {/* FAQs */}
-      <section className="section-padding bg-gray-50">
-        <div className="container-width">
+      <section className="py-16 md:py-20 bg-gray-50">
+        <div className="container-width px-4 md:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
               Frequently Asked Questions
@@ -338,8 +384,8 @@ export default function ServicesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="container-width">
+      <section className="py-16 md:py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="container-width px-4 md:px-8">
           <div className="text-center text-white max-w-4xl mx-auto">
             <h2 className="text-3xl lg:text-4xl font-bold mb-6">
               Ready to Get Started?
