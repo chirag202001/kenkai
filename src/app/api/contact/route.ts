@@ -33,8 +33,13 @@ export async function POST(request: Request) {
       timestamp: new Date().toISOString(),
     });
 
-    // Send email notification
-    await sendContactEmail({ name, email, company, subject, message });
+    // Send email notification (non-blocking if SMTP not configured)
+    try {
+      await sendContactEmail({ name, email, company, subject, message });
+    } catch (emailError) {
+      console.error('Email sending failed (non-fatal):', emailError);
+      // Continue - don't fail the request if email fails
+    }
 
     return NextResponse.json(
       { 
