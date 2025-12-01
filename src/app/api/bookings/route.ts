@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getBookedSlots, createBooking, isSlotAvailable } from '@/lib/supabase';
 
 interface Booking {
   id: string;
@@ -9,20 +10,6 @@ interface Booking {
   company: string;
   service: string;
   createdAt: string;
-}
-
-// In-memory storage (for now - will be replaced with database)
-// Note: This will reset on each deployment, but works for testing
-let bookingsStore: Booking[] = [];
-
-async function getBookings(): Promise<Booking[]> {
-  // In production, this would query a database
-  return bookingsStore;
-}
-
-async function saveBookings(bookings: Booking[]) {
-  // In production, this would save to a database
-  bookingsStore = bookings;
 }
 
 // GET: Check available slots for a specific date
@@ -38,10 +25,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const bookings = await getBookings();
-    const bookedSlots = bookings
-      .filter(b => b.date === date)
-      .map(b => b.time);
+    const bookedSlots = await getBookedSlots(date);
 
     return NextResponse.json({ bookedSlots });
   } catch (error) {
@@ -67,34 +51,25 @@ export async function POST(request: Request) {
       );
     }
 
-    const bookings = await getBookings();
-
     // Check if slot is already booked
-    const isSlotTaken = bookings.some(
-      b => b.date === date && b.time === time
-    );
+    const slotAvailable = await isSlotAvailable(date, time);
 
-    if (isSlotTaken) {
+    if (!slotAvailable) {
       return NextResponse.json(
         { error: 'This time slot is already booked. Please select another time.' },
         { status: 409 }
       );
     }
 
-    // Create new booking
-    const newBooking: Booking = {
-      id: `booking_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    // Create new booking in database
+    const newBooking = await createBooking({
       date,
       time,
       name,
       email,
       company,
-      service,
-      createdAt: new Date().toISOString()
-    };
-
-    bookings.push(newBooking);
-    await saveBookings(bookings);
+      service
+    });
 
     // Log the booking
     console.log('New booking created:', newBooking);
