@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Calendar, Clock, User, Mail, Building2, Trash2 } from "lucide-react";
+import { Calendar, Clock, User, Mail, Building2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Booking {
@@ -21,10 +21,46 @@ export default function BookingsViewPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<string>('all');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    
+    try {
+      const response = await fetch('/api/admin/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+        sessionStorage.setItem('admin_authenticated', 'true');
+      } else {
+        setError('Invalid password');
+        setPassword('');
+      }
+    } catch (error) {
+      setError('Authentication failed');
+    }
+  };
 
   useEffect(() => {
-    fetchAllBookings();
+    // Check if already authenticated in this session
+    const isAuth = sessionStorage.getItem('admin_authenticated') === 'true';
+    if (isAuth) {
+      setIsAuthenticated(true);
+    }
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchAllBookings();
+    }
+  }, [isAuthenticated]);
 
   const fetchAllBookings = async () => {
     try {
@@ -54,6 +90,62 @@ export default function BookingsViewPage() {
       day: 'numeric'
     });
   };
+
+  // Login screen
+  if (!isAuthenticated) {
+    return (
+      <main>
+        <Header />
+        <section className="min-h-screen bg-gray-50 flex items-center justify-center py-16">
+          <div className="max-w-md w-full mx-4">
+            <div className="bg-white rounded-lg shadow-lg p-8">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                  <Lock className="w-8 h-8 text-blue-600" />
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900">Admin Access</h1>
+                <p className="text-gray-600 mt-2">Enter password to view bookings</p>
+              </div>
+
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter admin password"
+                    required
+                  />
+                </div>
+
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <Button type="submit" className="w-full">
+                  Login
+                </Button>
+              </form>
+
+              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  <strong>Security Notice:</strong> This page contains sensitive client data and is protected.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <Footer />
+      </main>
+    );
+  }
 
   return (
     <main>
