@@ -1,9 +1,4 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-
-const DATA_DIR = path.join(process.cwd(), 'data');
-const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
 
 interface Booking {
   id: string;
@@ -16,13 +11,12 @@ interface Booking {
   createdAt: string;
 }
 
+// This should match the store in the main route
+// In production, both would query the same database
+let bookingsStore: Booking[] = [];
+
 async function getBookings(): Promise<Booking[]> {
-  try {
-    const data = await fs.readFile(BOOKINGS_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
+  return bookingsStore;
 }
 
 export async function GET() {

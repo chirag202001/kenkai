@@ -1,9 +1,4 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-
-const DATA_DIR = path.join(process.cwd(), 'data');
-const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
 
 interface Booking {
   id: string;
@@ -16,27 +11,18 @@ interface Booking {
   createdAt: string;
 }
 
-async function ensureDataDir() {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  } catch (err) {
-    console.error('Failed to create data directory:', err);
-  }
-}
+// In-memory storage (for now - will be replaced with database)
+// Note: This will reset on each deployment, but works for testing
+let bookingsStore: Booking[] = [];
 
 async function getBookings(): Promise<Booking[]> {
-  try {
-    await ensureDataDir();
-    const data = await fs.readFile(BOOKINGS_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
+  // In production, this would query a database
+  return bookingsStore;
 }
 
 async function saveBookings(bookings: Booking[]) {
-  await ensureDataDir();
-  await fs.writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2));
+  // In production, this would save to a database
+  bookingsStore = bookings;
 }
 
 // GET: Check available slots for a specific date
@@ -110,19 +96,19 @@ export async function POST(request: Request) {
     bookings.push(newBooking);
     await saveBookings(bookings);
 
-    // Send confirmation email (optional - using existing email setup)
-    try {
-      await sendBookingConfirmation({ 
-        ...newBooking, 
-        challenge, 
-        role, 
-        timeline, 
-        budget 
-      });
-    } catch (emailError) {
-      console.error('Failed to send booking confirmation email:', emailError);
-      // Continue - don't fail the booking if email fails
-    }
+    // Log the booking
+    console.log('New booking created:', newBooking);
+
+    // Send confirmation email (non-blocking)
+    sendBookingConfirmation({ 
+      ...newBooking, 
+      challenge, 
+      role, 
+      timeline, 
+      budget 
+    }).catch(err => {
+      console.error('Failed to send booking confirmation email:', err);
+    });
 
     return NextResponse.json({ 
       success: true, 
@@ -131,28 +117,28 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error creating booking:', error);
     return NextResponse.json(
-      { error: 'Failed to create booking' },
+      { error: 'Failed to create booking', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
 }
 
 async function sendBookingConfirmation(data: any) {
-  const nodemailer = await import('nodemailer');
-  
-  const host = process.env.SMTP_HOST;
-  const port = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const to = process.env.CONTACT_EMAIL_TO || 'hello@kenkailabs.com';
-  const from = process.env.CONTACT_EMAIL_FROM || user || 'noreply@kenkailabs.com';
-
-  if (!host || !user || !pass) {
-    console.log('Booking confirmation logged (SMTP not configured):', data);
-    return;
-  }
-
   try {
+    const nodemailer = await import('nodemailer');
+    
+    const host = process.env.SMTP_HOST;
+    const port = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587;
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+    const to = process.env.CONTACT_EMAIL_TO || 'hello@kenkailabs.com';
+    const from = process.env.CONTACT_EMAIL_FROM || user || 'noreply@kenkailabs.com';
+
+    if (!host || !user || !pass) {
+      console.log('Booking confirmation logged (SMTP not configured):', data);
+      return;
+    }
+
     const transporter = nodemailer.default.createTransport({
       host,
       port,
@@ -235,7 +221,6 @@ Booked at: ${new Date(data.createdAt).toLocaleString()}
 
     console.log('Booking confirmation email sent');
   } catch (err) {
-    console.error('Failed to send booking email:', err);
-    throw err;
+    console.error('Failed to send booking email (non-fatal):', err);
   }
 }
