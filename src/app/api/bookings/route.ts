@@ -138,7 +138,7 @@ export async function POST(request: Request) {
 }
 
 async function sendBookingConfirmation(data: any) {
-  const nodemailer = require('nodemailer');
+  const nodemailer = await import('nodemailer');
   
   const host = process.env.SMTP_HOST;
   const port = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587;
@@ -153,7 +153,7 @@ async function sendBookingConfirmation(data: any) {
   }
 
   try {
-    const transporter = nodemailer.createTransport({
+    const transporter = nodemailer.default.createTransport({
       host,
       port,
       secure: port === 465,
