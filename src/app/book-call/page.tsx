@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CalendarPicker from "@/components/CalendarPicker";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -369,45 +370,55 @@ function BookCallContent() {
                     {/* Calendar */}
                     <div>
                       <h3 className="text-xl font-bold text-gray-900 mb-4">Choose Date</h3>
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <Calendar className="w-full h-64 text-gray-400" />
-                        <p className="text-center text-gray-600 mt-4">
-                          Calendar integration would be implemented here
-                        </p>
-                      </div>
+                      <CalendarPicker
+                        selectedDate={formData.preferredDate}
+                        onDateSelect={(date) => setFormData({ ...formData, preferredDate: date })}
+                      />
                     </div>
 
                     {/* Time Slots */}
                     <div>
                       <h3 className="text-xl font-bold text-gray-900 mb-4">Available Times</h3>
-                      <div className="grid grid-cols-2 gap-3 mb-6">
-                        {timeSlots.map((time) => (
-                          <button
-                            key={time}
-                            className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                              formData.preferredTime === time
-                                ? 'border-blue-600 bg-blue-50 text-blue-600'
-                                : 'border-gray-200 hover:border-blue-300'
-                            }`}
-                            onClick={() => setFormData({...formData, preferredTime: time})}
-                          >
-                            {time}
-                          </button>
-                        ))}
-                      </div>
-
-                      {/* Summary */}
-                      <div className="bg-blue-50 rounded-lg p-6">
-                        <h4 className="font-bold text-blue-900 mb-3">Booking Summary</h4>
-                        <div className="space-y-2 text-sm text-blue-800">
-                          <div><strong>Service:</strong> {serviceTypes.find(s => s.id === selectedService)?.title}</div>
-                          <div><strong>Company:</strong> {formData.company}</div>
-                          <div><strong>Contact:</strong> {formData.name} ({formData.email})</div>
-                          {formData.preferredTime && (
-                            <div><strong>Time:</strong> {formData.preferredTime}</div>
-                          )}
+                      {!formData.preferredDate ? (
+                        <div className="bg-gray-50 rounded-lg p-8 text-center">
+                          <Clock className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                          <p className="text-gray-600">Please select a date first</p>
                         </div>
-                      </div>
+                      ) : (
+                        <>
+                          <div className="grid grid-cols-2 gap-3 mb-6">
+                            {timeSlots.map((time) => (
+                              <button
+                                key={time}
+                                className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                                  formData.preferredTime === time
+                                    ? 'border-blue-600 bg-blue-50 text-blue-600'
+                                    : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+                                }`}
+                                onClick={() => setFormData({...formData, preferredTime: time})}
+                              >
+                                {time}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Summary */}
+                          <div className="bg-blue-50 rounded-lg p-6">
+                            <h4 className="font-bold text-blue-900 mb-3">Booking Summary</h4>
+                            <div className="space-y-2 text-sm text-blue-800">
+                              <div><strong>Service:</strong> {serviceTypes.find(s => s.id === selectedService)?.title}</div>
+                              <div><strong>Company:</strong> {formData.company}</div>
+                              <div><strong>Contact:</strong> {formData.name} ({formData.email})</div>
+                              {formData.preferredDate && (
+                                <div><strong>Date:</strong> {new Date(formData.preferredDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                              )}
+                              {formData.preferredTime && (
+                                <div><strong>Time:</strong> {formData.preferredTime} IST</div>
+                              )}
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
 
@@ -418,7 +429,7 @@ function BookCallContent() {
                     </Button>
                     <Button 
                       onClick={handleSubmit}
-                      disabled={isSubmitting || !formData.preferredTime}
+                      disabled={isSubmitting || !formData.preferredDate || !formData.preferredTime}
                       className="flex items-center space-x-2"
                     >
                       <span>{isSubmitting ? 'Confirming...' : 'Confirm Booking'}</span>
