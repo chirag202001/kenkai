@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CalendarPickerProps {
   selectedDate: string;
   onDateSelect: (date: string) => void;
+  onDateChange?: (date: string) => void;
 }
 
-export default function CalendarPicker({ selectedDate, onDateSelect }: CalendarPickerProps) {
+export default function CalendarPicker({ selectedDate, onDateSelect, onDateChange }: CalendarPickerProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const getDaysInMonth = (date: Date) => {
@@ -47,6 +48,9 @@ export default function CalendarPicker({ selectedDate, onDateSelect }: CalendarP
     if (clickedDate >= today) {
       const dateString = clickedDate.toISOString().split('T')[0];
       onDateSelect(dateString);
+      if (onDateChange) {
+        onDateChange(dateString);
+      }
     }
   };
 

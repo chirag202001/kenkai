@@ -28,6 +28,9 @@ function BookCallContent() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [bookingError, setBookingError] = useState('');
 
   const serviceTypes = [
     {
@@ -65,14 +68,60 @@ function BookCallContent() {
     });
   };
 
+  const fetchBookedSlots = async (date: string) => {
+    if (!date) return;
+    
+    setLoadingSlots(true);
+    try {
+      const response = await fetch(`/api/bookings?date=${date}`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        setBookedSlots(data.bookedSlots || []);
+      }
+    } catch (error) {
+      console.error('Error fetching booked slots:', error);
+      setBookedSlots([]);
+    } finally {
+      setLoadingSlots(false);
+    }
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
+    setBookingError('');
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          service: serviceTypes.find(s => s.id === selectedService)?.title,
+          date: formData.preferredDate,
+          time: formData.preferredTime
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsSubmitted(true);
+      } else {
+        setBookingError(data.error || 'Failed to create booking');
+        // If slot was taken, refresh the booked slots
+        if (response.status === 409) {
+          await fetchBookedSlots(formData.preferredDate);
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting booking:', error);
+      setBookingError('Failed to create booking. Please try again.');
+    } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 2000);
+    }
   };
 
   const nextStep = () => setStep(step + 1);
@@ -372,7 +421,8 @@ function BookCallContent() {
                       <h3 className="text-xl font-bold text-gray-900 mb-4">Choose Date</h3>
                       <CalendarPicker
                         selectedDate={formData.preferredDate}
-                        onDateSelect={(date) => setFormData({ ...formData, preferredDate: date })}
+                        onDateSelect={(date) => setFormData({ ...formData, preferredDate: date, preferredTime: '' })}
+                        onDateChange={fetchBookedSlots}
                       />
                     </div>
 
@@ -384,22 +434,34 @@ function BookCallContent() {
                           <Clock className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                           <p className="text-gray-600">Please select a date first</p>
                         </div>
+                      ) : loadingSlots ? (
+                        <div className="bg-gray-50 rounded-lg p-8 text-center">
+                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-3"></div>
+                          <p className="text-gray-600">Loading available times...</p>
+                        </div>
                       ) : (
                         <>
                           <div className="grid grid-cols-2 gap-3 mb-6">
-                            {timeSlots.map((time) => (
-                              <button
-                                key={time}
-                                className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                                  formData.preferredTime === time
-                                    ? 'border-blue-600 bg-blue-50 text-blue-600'
-                                    : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
-                                }`}
-                                onClick={() => setFormData({...formData, preferredTime: time})}
-                              >
-                                {time}
-                              </button>
-                            ))}
+                            {timeSlots.map((time) => {
+                              const isBooked = bookedSlots.includes(time);
+                              return (
+                                <button
+                                  key={time}
+                                  disabled={isBooked}
+                                  className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                                    isBooked
+                                      ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                                      : formData.preferredTime === time
+                                      ? 'border-blue-600 bg-blue-50 text-blue-600'
+                                      : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+                                  }`}
+                                  onClick={() => !isBooked && setFormData({...formData, preferredTime: time})}
+                                >
+                                  {time}
+                                  {isBooked && <span className="block text-xs mt-1">Booked</span>}
+                                </button>
+                              );
+                            })}
                           </div>
 
                           {/* Summary */}
@@ -421,6 +483,12 @@ function BookCallContent() {
                       )}
                     </div>
                   </div>
+
+                  {bookingError && (
+                    <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-800 text-sm">{bookingError}</p>
+                    </div>
+                  )}
 
                   <div className="flex justify-between mt-8">
                     <Button variant="outline" onClick={prevStep} className="flex items-center space-x-2">
